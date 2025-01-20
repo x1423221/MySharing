@@ -25,8 +25,7 @@ export class Split {
 }
 
 export class SplitData {
-    constructor(id, name, members = [], transactions = []) {
-        this.id = id;
+    constructor(name, members = [], transactions = []) {
         this.name = name;
         this.members = members;
         this.transactions = transactions;

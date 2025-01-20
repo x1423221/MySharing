@@ -1,6 +1,29 @@
 import 'bootstrap/dist/css/bootstrap.min.css'
+import 'bootstrap-icons/font/bootstrap-icons.css'
 
 import App from './App.vue'
 import { createApp } from 'vue'
+import liff from '@line/liff';
+import router from "./Router/Router";
 
-createApp(App).mount('#app')
+async function LiffInit() {
+    await liff.init({
+        liffId: '2006768109-93myxPab',
+        withLoginOnExternalBrowser: true, // 確保在外部瀏覽器上正確運作
+    }).then(() => {
+        if (!liff.isLoggedIn()) {
+            liff.login();
+        }
+    }).catch((err) => {
+
+        console.log(err.code, err.message);
+    });
+}
+
+LiffInit().then(() => {
+    const app = createApp(App);
+
+    app.use(router)
+    app.mount('#app')
+});
+

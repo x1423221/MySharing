@@ -1,4 +1,4 @@
-<template>
+<!-- <template>
   <div>
     <button class="btn btn-success" @click="handleAction('CreateGroup')">
       建立群組
@@ -75,4 +75,12 @@ const generateGUID = () => {
 };
 </script>
 
-<style></style>
+<style></style> -->
+
+<template>
+  <router-view></router-view>
+</template>
+
+<script setup></script>
+
+<style scoped></style>
