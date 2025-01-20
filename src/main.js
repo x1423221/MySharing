@@ -12,7 +12,7 @@ async function LiffInit() {
         withLoginOnExternalBrowser: true, // 確保在外部瀏覽器上正確運作
     }).then(() => {
         if (!liff.isLoggedIn()) {
-            liff.login();
+            liff.login({ redirectUri: "https://x1423221.github.io/MySharing/" });
         }
     }).catch((err) => {
 
