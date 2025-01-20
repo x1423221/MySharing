@@ -9,7 +9,6 @@ import router from "./Router/Router";
 async function LiffInit() {
     await liff.init({
         liffId: '2006768109-93myxPab',
-        withLoginOnExternalBrowser: true, // 確保在外部瀏覽器上正確運作
     }).then(() => {
         if (!liff.isLoggedIn()) {
             liff.login({ redirectUri: "https://x1423221.github.io/MySharing/" });
