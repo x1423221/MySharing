@@ -1,2 +1,2 @@
 "use strict";(self["webpackChunksplit"]=self["webpackChunksplit"]||[]).push([[410],{3410:function(n,u,r){r.r(u),r.d(u,{default:function(){return l}});var t=r(6768);function e(n,u){return(0,t.uX)(),(0,t.CE)("div",null,"123")}var s=r(1241);const c={},i=(0,s.A)(c,[["render",e]]);var l=i}}]);
-//# sourceMappingURL=410.52ccef89.js.map
+//# sourceMappingURL=410.38fd7f5b.js.map
