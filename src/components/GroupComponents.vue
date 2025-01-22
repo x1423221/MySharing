@@ -24,7 +24,7 @@ import liff from "@line/liff";
 onMounted(() => {
   try {
     const groupDataString = sessionStorage.getItem("currentGroup");
-    storedGroup.value = JSON.parse(groupDataString);
+    storedGroup.value = groupDataString;
   } catch (err) {
     alert(err);
   }

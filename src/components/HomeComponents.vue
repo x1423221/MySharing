@@ -156,17 +156,16 @@ const gotoGroup = async () => {
   //已經存在這個文件
   if (docSnap.exists()) {
     await updateDoc(docRef, {
-      [crypto.randomUUID()]: jdata.value,
+      [crypto.randomUUID()]: splitallData.value,
     });
   }
   //否則新增文件並新增群組
   else {
-    await setDoc(docRef, { [crypto.randomUUID()]: jdata.value })
+    await setDoc(docRef, { [crypto.randomUUID()]: splitallData.value })
       .then(() => console.log("Data saved successfully"))
       .catch((err) => console.error("Error saving data:", err));
   }
-
-  sessionStorage.setItem("currentGroup", jdata.value);
+  sessionStorage.setItem("currentGroup", splitallData.value);
   }catch(err){
     console.log(err + "新增資料失敗");
   }
