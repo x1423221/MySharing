@@ -159,10 +159,11 @@ const gotoGroup = async () => {
   router.push({ path: "/group", query: { id: profile.value.userId } });
 };
 
-const gotoHistory = async () => {};
-isLoading.value = true;
+const gotoHistory = async () => {
+  isLoading.value = true;
+  router.push({ path: "/history" });
+};
 
-router.push({ path: "/history" });
 
 // const generateGUID = () => {
 //   return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
