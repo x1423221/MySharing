@@ -150,6 +150,7 @@ const gotoGroup = async () => {
 };
 
 const gotoHistory = () => {};
+router.push({ path: "/history", query: { id: profile.value.userId } });
 
 // const generateGUID = () => {
 //   return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {

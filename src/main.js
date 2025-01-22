@@ -11,7 +11,7 @@ async function LiffInit() {
         liffId: '2006768109-93myxPab',
     }).then(() => {
         if (!liff.isLoggedIn()) {
-            liff.login({ redirectUri: "https://x1423221.github.io/MySharing/" });
+            liff.login();
         }
     }).catch((err) => {
 
