@@ -133,11 +133,13 @@ const gotoGroup = async () => {
 //Uea43486b3bc11062986a319913daeb56
   doclist.forEach((els)=>{
     const data = els.data();
+    console.log("資料:" + data);
     const targetMember = "Uea43486b3bc11062986a319913daeb56"; // 目標成員
     const filteredGroups = Object.entries(data).filter((value) => {
       return value.members && value.members.includes(targetMember);
     });
 
+    console.log("處理後資料:" + filteredGroups);
     const result = filteredGroups.map(([key, value]) => ({
       id: key,
       ...value,
