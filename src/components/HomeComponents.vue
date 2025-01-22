@@ -100,7 +100,7 @@ const generateGUID = () => {
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import db from "../firebase/config";
-import { doc, setDoc, getDoc, updateDoc , query ,where, getFirestore, collection, getDocs} from "firebase/firestore";
+import { doc, setDoc, getDoc, updateDoc , getFirestore, collection, getDocs} from "firebase/firestore";
 import { SplitData } from "../Models/SplitModels";
 import liff from "@line/liff";
 
@@ -129,29 +129,32 @@ const gotoGroup = async () => {
   try{
   const dv = getFirestore();
   const testref = collection(dv,"241229Test");
-  const q = query(testref, where("members", "array-contains", "Uea43486b3bc11062986a319913daeb56"));
-  const Testdoc = await getDocs(q);
-  const Testdoc1 = await getDocs(testref);
-  
-  Testdoc1.forEach((ele)=>{
-    console.log(ele.data());
+  const doclist = await getDocs(testref);
+//Uea43486b3bc11062986a319913daeb56
+  doclist.forEach((els)=>{
+    const data = els.data();
+    const targetMember = "Uea43486b3bc11062986a319913daeb56"; // 目標成員
+    const filteredGroups = Object.entries(data).filter((value) => {
+      return value.members && value.members.includes(targetMember);
+    });
+
+    const result = filteredGroups.map(([key, value]) => ({
+      id: key,
+      ...value,
+    }));
+
+    console.log(result);
   });
-  const result = [];
-  Testdoc.forEach((docele) => {
-    console.log(docele);
-    result.push({id:docele.id , ...docele.data()});  
-  });
-  console.log(result);
-  result.forEach((item,index)=>{
-    console.log(index  + ":" + item.name);
-  })
   }catch(err){
-    console.log(err + "測試失敗")
+    console.log(err);
   }
 
   try{
   const docRef = doc(db, "241229Test", profile.value.userId);
   const docSnap = await getDoc(docRef);
+  
+
+
   splitallData.value = new SplitData(`${profile.value.displayName}的群組`);
   jdata.value = JSON.stringify(splitallData.value);
   //已經存在這個文件
