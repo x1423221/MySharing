@@ -131,7 +131,7 @@ const gotoGroup = async () => {
   const testref = collection(dv,"241229Test");
   const q = query(testref, where("members", "array-contains", "Uea43486b3bc11062986a319913daeb56"));
   const Testdoc = await getDocs(q);
-  const Testdoc1 = await getDoc(testref);
+  const Testdoc1 = await getDocs(testref);
   Testdoc1.forEach((ele)=>{
     console.log(ele.data());
   });
