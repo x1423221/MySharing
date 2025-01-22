@@ -135,7 +135,7 @@ const gotoGroup = async () => {
   Testdoc.forEach((docele) => {
     result.push({id:docele.id , ...docele.data()});  
   });
-
+  console.log(result);
   result.forEach((item,index)=>{
     console.log(index  + ":" + item.name);
   })
