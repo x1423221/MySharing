@@ -135,20 +135,19 @@ const gotoGroup = async () => {
     const data = els.data();
     console.log("資料:" + JSON.stringify(data));
     const targetMember = "Uea43486b3bc11062986a319913daeb56"; // 目標成員
-    
+
     const filteredGroups = Object.entries(data).filter((value) => {
-      console.log(value);
-      console.log(value.members);
-      console.log(value.members.includes(targetMember))
-      return value.members && value.members.includes(targetMember);
+      console.log("資料" + value);
+      console.log("M" + Array.isArray(value.members));
+      return Array.isArray(value.members) && value.members.includes(targetMember);
     });
 
-    console.log("處理後資料:" + filteredGroups);
     const result = filteredGroups.map(([key, value]) => ({
       id: key,
       ...value,
     }));
 
+    console.log("處理後資料:" + filteredGroups);
     console.log(result);
   });
   }catch(err){
