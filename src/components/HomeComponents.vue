@@ -126,6 +126,7 @@ const router = useRouter();
 
 const gotoGroup = async () => {
   isLoading.value = true;
+  try{
   const dv = getFirestore();
   const testref = collection(dv,"241229Test");
   const q = query(testref, where("members", "array-contains", "Uea43486b3bc11062986a319913daeb56"));
@@ -138,9 +139,13 @@ const gotoGroup = async () => {
   result.forEach((item,index)=>{
     console.log(index  + ":" + item.name);
   })
+  }catch(err){
+    console.log(err + "測試失敗")
+  }
 
+  try{
   const docRef = doc(db, "241229Test", profile.value.userId);
-  const docSnap = await getDoc(q);
+  const docSnap = await getDoc(docRef);
   splitallData.value = new SplitData(`${profile.value.displayName}的群組`);
   jdata.value = JSON.stringify(splitallData.value);
   //已經存在這個文件
@@ -157,7 +162,9 @@ const gotoGroup = async () => {
   }
 
   sessionStorage.setItem("currentGroup", jdata.value);
-
+  }catch(err){
+    console.log(err + "新增資料失敗");
+  }
   router.push({ path: "/group", query: { id: profile.value.userId } });
 };
 
