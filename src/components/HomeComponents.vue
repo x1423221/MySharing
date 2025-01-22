@@ -133,9 +133,13 @@ const gotoGroup = async () => {
 //Uea43486b3bc11062986a319913daeb56
   doclist.forEach((els)=>{
     const data = els.data();
-    console.log("資料:" + data.value);
+    console.log("資料:" + JSON.stringify(data));
     const targetMember = "Uea43486b3bc11062986a319913daeb56"; // 目標成員
-    const filteredGroups = Object.entries(data.value).filter((value) => {
+    
+    const filteredGroups = Object.entries(data).filter((value) => {
+      console.log(value);
+      console.log(value.members);
+      console.log(value.members.includes(targetMember))
       return value.members && value.members.includes(targetMember);
     });
 
