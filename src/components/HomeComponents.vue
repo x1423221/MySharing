@@ -128,6 +128,7 @@ const gotoGroup = async () => {
   isLoading.value = true;
   const docRef = doc(db, "241229Test", profile.value.userId);
   const docSnap = await getDoc(docRef);
+  console.log(docSnap);
   splitallData.value = new SplitData(`${profile.value.displayName}的群組`);
   jdata.value = JSON.stringify(splitallData.value);
 
