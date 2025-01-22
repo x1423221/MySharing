@@ -100,7 +100,7 @@ const generateGUID = () => {
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import db from "../firebase/config";
-import { doc, setDoc, getDoc, updateDoc , query ,where} from "firebase/firestore";
+import { doc, setDoc, getDoc, updateDoc , query ,where, getFirestore, collection, getDocs} from "firebase/firestore";
 import { SplitData } from "../Models/SplitModels";
 import liff from "@line/liff";
 
@@ -126,21 +126,23 @@ const router = useRouter();
 
 const gotoGroup = async () => {
   isLoading.value = true;
-  const docRef = doc(db, "241229Test", profile.value.userId);
-  const q = query(docRef, where("members", "array-contains", "Uea43486b3bc11062986a319913daeb56"));
-
-  const docSnap = await getDoc(q);
-  splitallData.value = new SplitData(`${profile.value.displayName}的群組`);
-  jdata.value = JSON.stringify(splitallData.value);
-
+  const dv = getFirestore();
+  const testref = collection(dv,"241229Test");
+  const q = query(testref, where("members", "array-contains", "Uea43486b3bc11062986a319913daeb56"));
+  const Testdoc = await getDocs(q);
   const result = [];
-  docSnap.forEach((docele) => {
+  Testdoc.forEach((docele) => {
     result.push({id:docele.id , ...docele.data()});  
   });
 
   result.forEach((item,index)=>{
     console.log(index  + ":" + item.name);
   })
+
+  const docRef = doc(db, "241229Test", profile.value.userId);
+  const docSnap = await getDoc(q);
+  splitallData.value = new SplitData(`${profile.value.displayName}的群組`);
+  jdata.value = JSON.stringify(splitallData.value);
   //已經存在這個文件
   if (docSnap.exists()) {
     await updateDoc(docRef, {
