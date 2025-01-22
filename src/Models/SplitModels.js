@@ -4,6 +4,13 @@ export class Member {
         this.userid = userid;
         this.name = name;
     }
+
+    toMap() {
+        return {
+            userid: this.userid,
+            name : this.name
+        };
+    }
 }
 
 export class Transaction {
@@ -15,12 +22,30 @@ export class Transaction {
         this.date = date;
         this.split = split;
     }
+
+    toMap() {
+        return {
+            id: this.id,
+            payer: this.payer,
+            amount: this.amount,
+            description: this.description,
+            date: this.date,
+            split: this.split
+        };
+    }
 }
 
 export class Split {
     constructor(userid = "", share = 0) {
         this.userid = userid;
         this.share = share;
+    }
+
+    toMap() {
+        return {
+            userid: this.userid,
+            share: this.share,
+        };
     }
 }
 
@@ -29,5 +54,13 @@ export class SplitData {
         this.name = name;
         this.members = members;
         this.transactions = transactions;
+    }
+
+    toMap() {
+        return {
+            name: this.name,
+            members: this.members,
+            transactions: this.transactions
+        };
     }
 }

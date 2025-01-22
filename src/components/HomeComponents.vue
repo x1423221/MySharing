@@ -132,6 +132,7 @@ const gotoGroup = async () => {
   const q = query(testref, where("members", "array-contains", "Uea43486b3bc11062986a319913daeb56"));
   const Testdoc = await getDocs(q);
   const Testdoc1 = await getDocs(testref);
+  
   Testdoc1.forEach((ele)=>{
     console.log(ele.data());
   });
@@ -156,16 +157,16 @@ const gotoGroup = async () => {
   //已經存在這個文件
   if (docSnap.exists()) {
     await updateDoc(docRef, {
-      [crypto.randomUUID()]: splitallData.value,
+      [crypto.randomUUID()]: splitallData.value.toMap(),
     });
   }
   //否則新增文件並新增群組
   else {
-    await setDoc(docRef, { [crypto.randomUUID()]: splitallData.value })
+    await setDoc(docRef, { [crypto.randomUUID()]: splitallData.value.toMap() })
       .then(() => console.log("Data saved successfully"))
       .catch((err) => console.error("Error saving data:", err));
   }
-  sessionStorage.setItem("currentGroup", splitallData.value);
+  sessionStorage.setItem("currentGroup", splitallData.value.toMap());
   }catch(err){
     console.log(err + "新增資料失敗");
   }
