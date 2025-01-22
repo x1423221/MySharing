@@ -150,12 +150,8 @@ const gotoGroup = async () => {
 };
 
 const gotoHistory = async () => {};
-router.push({ path: "/history", query: { id: profile.value.userId } });
-const docRef = doc(db, "241229Test", "Uea43486b3bc11062986a319913daeb56");//profile.value.userId);
+//router.push({ path: "/history", query: { id: profile.value.userId } });
 
-const docSnap = await getDoc(docRef);
-
-console.log(docSnap);
 // const generateGUID = () => {
 //   return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
 //     const r = (Math.random() * 16) | 0;
