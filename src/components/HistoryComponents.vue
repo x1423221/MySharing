@@ -42,9 +42,11 @@ onMounted(async () => {
 
     doclist.forEach((ele) => {
       const data = ele.data();
-      const filteredGroups = Object.entries(data).filter(([value]) => {
-        console.log("value:" + value);
-        const members = Object.entries(value).filter((v) => {
+      const filteredGroups = Object.entries(data).filter(([key, value]) => {
+        console.log("key:" + key);
+        const members = Object.entries(value).filter(([k, v]) => {
+          console.log("k:" + k);
+          console.log("v:" + v);
           return Array.isArray(v.members) && v.members.includes(userId);
         });
         console.log("members:" + members);
