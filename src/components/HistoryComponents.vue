@@ -11,33 +11,18 @@
         </button>
       </div>
     </div>
-    <div class="row" v-for="(group, index) in result" :key="group.id">
+    <div class="card" v-for="(group, index) in result" :key="group.id">
       <div class="row">
         <h3>{{ group.name }}</h3>
         <button
           id="btnCreateNew"
           class="btn btn-success"
           @click="gotoGroup(index)"
-        ></button>
-      </div>
-    </div>
-    <!-- <div>
-      <div class="col-2">
-        <button class="btn btn-danger" @click="gotoHome">
-          <i class="bi bi-x-lg"></i>
+        >
+          前往{{ group.name }}
         </button>
       </div>
     </div>
-    <div class="row" v-for="(group, index) in result" :key="group.id">
-      <div class="row">
-        <h3>{{ group.name }}</h3>
-        <button
-          id="btnCreateNew"
-          class="btn btn-success"
-          @click="gotoGroup(index)"
-        ></button>
-      </div>
-    </div> -->
   </div>
 </template>
 
@@ -121,5 +106,10 @@ onMounted(async () => {
 .title-container {
   width: 150px;
   margin-left: 15px;
+}
+
+.card {
+  margin: 5px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 </style>

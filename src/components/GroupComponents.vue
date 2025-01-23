@@ -1,8 +1,12 @@
 <template>
   <div class="group-container">
-    <div class="row align-items-start">
-      <div class="col-2">
-        <button class="btn btn-danger" @click="gotoHome">
+    <div class="container-title">
+      <div class="title-container">
+        <button
+          id="btnGoHome"
+          class="btn btn-danger d-flex align-items-center justify-content-center"
+          @click="gotoHome"
+        >
           <i class="bi bi-x-lg"></i>
         </button>
       </div>
@@ -83,5 +87,13 @@ const shareMember = () => {
   background: white;
   border-radius: 25px;
   padding: 15px;
+}
+
+#btnGoHome {
+  border-radius: 50%; /* 圓角 100% 形成圓形 */
+  width: 20px;
+  height: 20px;
+  border: 1px solid red;
+  padding: 0; /* 移除額外的內間距 */
 }
 </style>
