@@ -24,6 +24,7 @@ import { getFirestore, collection, getDocs } from "firebase/firestore";
 
 const userId = ref(null);
 const result = ref(null);
+
 const gotoHome = () => {
   const router = useRouter();
   router.push("/");

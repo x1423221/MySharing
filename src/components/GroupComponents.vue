@@ -1,13 +1,15 @@
 <template>
   <div class="group-container">
     <div class="row align-items-start">
-      <div class="col-9" v-if="storedGroup">
-        {{ storedGroup.name }}
-      </div>
       <div class="col-2">
         <button class="btn btn-danger" @click="gotoHome">
           <i class="bi bi-x-lg"></i>
         </button>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-9" v-if="storedGroup">
+        {{ storedGroup.name }}
       </div>
     </div>
     <div class="row">
