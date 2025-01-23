@@ -140,8 +140,8 @@ const gotoGroup = async () => {
     const doclist = await getDocs(testref);
     //Uea43486b3bc11062986a319913daeb56
     doclist.forEach((ele) => {
-      const data = JSON.stringify(ele.data());
-      console.log("資料:" + JSON.stringify(data));
+      const data = JSON.parse(ele.data());
+      console.log("資料:" + JSON.parse(data));
       const targetMember = "Uea43486b3bc11062986a319913daeb56"; // 目標成員
 
       const filteredGroups = Object.entries(data).filter(([key, value]) => {
