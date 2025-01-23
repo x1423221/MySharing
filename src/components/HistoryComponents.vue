@@ -19,8 +19,9 @@
 </template>
 
 <script setup>
-import { inject, onMounted, useRouter, ref } from "vue";
+import { inject, onMounted, ref } from "vue";
 import { getFirestore, collection, getDocs } from "firebase/firestore";
+import { useRouter } from "vue-router";
 
 const userId = ref(null);
 const result = ref(null);
