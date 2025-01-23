@@ -7,12 +7,14 @@
         </button>
       </div>
     </div>
-    <div class="row" v-for="group in result" :key="group.id">
-      <div>
+    <div class="row" v-for="(group, index) in result" :key="group.id">
+      <div class="row">
         <h3>{{ group.name }}</h3>
-        <p>Group ID: {{ group.id }}</p>
-        <p>Members: {{ group.members.join(", ") || "No members" }}</p>
-        <p>transactions: {{ group.transactions.join(", ") || "No members" }}</p>
+        <button
+          id="btnCreateNew"
+          class="btn btn-success"
+          @click="gotoGroup(index)"
+        ></button>
       </div>
     </div>
   </div>
@@ -31,6 +33,12 @@ const gotoHome = () => {
   router.push("/");
 };
 
+const gotoGroup = (index) => {
+  sessionStorage.setItem("currentGroup", result.value[index]);
+  sessionStorage.setItem("id", userId.value);
+  router.push("/group");
+};
+
 onMounted(async () => {
   try {
     const isLoading = inject("isLoading");
@@ -42,30 +50,15 @@ onMounted(async () => {
 
     doclist.forEach((ele) => {
       const data = ele.data();
-      // const filteredGroups = Object.entries(data).filter(([key, value]) => {
-      //   console.log("key:" + key);
-      //   const tmpdata = Object.entries(value).filter(([k, v]) => {
-      //     if (k == "members") {
-      //       return v.includes(userId);
-      //     }
-      //   });
-      //   console.log("tmpdata:" + tmpdata);
-      //   return tmpdata.length > 0;
-      // });
-
       const filteredGroups = Object.entries(data).filter(([key, value]) => {
         console.log("key:" + key);
-        console.log("value:" + value);
-        const aw = Object.entries(value).filter(([k, v]) => {
+        const tmpdata = Object.entries(value).filter(([k, v]) => {
           if (k == "members") {
             return v.includes(userId.value);
           }
         });
-        console.log("aw:" + aw);
-        return aw.length > 0;
+        return tmpdata.length > 0;
       });
-
-      console.log("filteredGroups:" + filteredGroups);
 
       result.value = [
         ...result.value,
