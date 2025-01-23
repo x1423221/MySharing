@@ -48,7 +48,7 @@ onMounted(async () => {
           console.log("k:" + k);
           console.log("v:" + v);
           console.log("type:" + typeof v);
-          return v.members.split(",").includes(userId);
+          return v.members.includes(userId);
         });
         console.log("members:" + members);
         return members;
