@@ -51,6 +51,7 @@ onMounted(async () => {
         });
       });
 
+      console.log(filteredGroups);
       console.log(result.value);
       result.value = [
         ...result.value,
