@@ -49,8 +49,10 @@ onMounted(async () => {
             return v.includes(userId);
           }
         });
+        console.log("tmpdata:" + tmpdata);
         return tmpdata.length > 0;
       });
+      console.log("filteredGroups:" + filteredGroups);
 
       result.value = [
         ...result.value,
