@@ -23,9 +23,11 @@ import { inject, onMounted, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import liff from "@line/liff";
 
+const router = useRouter();
 const route = useRoute();
 const storedGroup = ref(null);
 const userId = ref(null);
+
 onMounted(() => {
   try {
     const isLoading = inject("isLoading");
@@ -40,7 +42,6 @@ onMounted(() => {
 });
 
 const gotoHome = () => {
-  const router = useRouter();
   router.push("/");
 };
 
