@@ -100,7 +100,15 @@ const generateGUID = () => {
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import db from "../firebase/config";
-import { doc, setDoc, getDoc, updateDoc , getFirestore, collection, getDocs} from "firebase/firestore";
+import {
+  doc,
+  setDoc,
+  getDoc,
+  updateDoc,
+  getFirestore,
+  collection,
+  getDocs,
+} from "firebase/firestore";
 import { SplitData } from "../Models/SplitModels";
 import liff from "@line/liff";
 
@@ -126,56 +134,59 @@ const router = useRouter();
 
 const gotoGroup = async () => {
   isLoading.value = true;
-  try{
-  const dv = getFirestore();
-  const testref = collection(dv,"241229Test");
-  const doclist = await getDocs(testref);
-//Uea43486b3bc11062986a319913daeb56
-  doclist.forEach((els)=>{
-    const data = els.data();
-    console.log("資料:" + JSON.stringify(data));
-    const targetMember = "Uea43486b3bc11062986a319913daeb56"; // 目標成員
+  try {
+    const dv = getFirestore();
+    const testref = collection(dv, "241229Test");
+    const doclist = await getDocs(testref);
+    //Uea43486b3bc11062986a319913daeb56
+    doclist.forEach((els) => {
+      const data = els.data();
+      console.log("資料:" + JSON.stringify(data));
+      const targetMember = "Uea43486b3bc11062986a319913daeb56"; // 目標成員
 
-    const filteredGroups = Object.entries(data).filter((value) => {
-      console.log("資料" + value);
-      console.log("M" + Array.isArray(value.members));
-      return Array.isArray(value.members) && value.members.includes(targetMember);
+      const filteredGroups = Object.entries(data).filter((value) => {
+        console.log("資料" + value);
+        console.log("isArray" + Array.isArray(value.members));
+        console.log("members" + value.members);
+        return (
+          Array.isArray(value.members) && value.members.includes(targetMember)
+        );
+      });
+
+      const result = filteredGroups.map(([key, value]) => ({
+        id: key,
+        ...value,
+      }));
+
+      console.log("處理後資料:" + filteredGroups);
+      console.log(result);
     });
-
-    const result = filteredGroups.map(([key, value]) => ({
-      id: key,
-      ...value,
-    }));
-
-    console.log("處理後資料:" + filteredGroups);
-    console.log(result);
-  });
-  }catch(err){
+  } catch (err) {
     console.log(err);
   }
 
-  try{
-  const docRef = doc(db, "241229Test", profile.value.userId);
-  const docSnap = await getDoc(docRef);
-  
+  try {
+    const docRef = doc(db, "241229Test", profile.value.userId);
+    const docSnap = await getDoc(docRef);
 
-
-  splitallData.value = new SplitData(`${profile.value.displayName}的群組`);
-  jdata.value = JSON.stringify(splitallData.value);
-  //已經存在這個文件
-  if (docSnap.exists()) {
-    await updateDoc(docRef, {
-      [crypto.randomUUID()]: splitallData.value.toMap(),
-    });
-  }
-  //否則新增文件並新增群組
-  else {
-    await setDoc(docRef, { [crypto.randomUUID()]: splitallData.value.toMap() })
-      .then(() => console.log("Data saved successfully"))
-      .catch((err) => console.error("Error saving data:", err));
-  }
-  sessionStorage.setItem("currentGroup", splitallData.value.toMap());
-  }catch(err){
+    splitallData.value = new SplitData(`${profile.value.displayName}的群組`);
+    jdata.value = JSON.stringify(splitallData.value);
+    //已經存在這個文件
+    if (docSnap.exists()) {
+      await updateDoc(docRef, {
+        [crypto.randomUUID()]: splitallData.value.toMap(),
+      });
+    }
+    //否則新增文件並新增群組
+    else {
+      await setDoc(docRef, {
+        [crypto.randomUUID()]: splitallData.value.toMap(),
+      })
+        .then(() => console.log("Data saved successfully"))
+        .catch((err) => console.error("Error saving data:", err));
+    }
+    sessionStorage.setItem("currentGroup", splitallData.value.toMap());
+  } catch (err) {
     console.log(err + "新增資料失敗");
   }
   router.push({ path: "/group", query: { id: profile.value.userId } });
@@ -185,7 +196,6 @@ const gotoHistory = async () => {
   isLoading.value = true;
   router.push({ path: "/history" });
 };
-
 
 // const generateGUID = () => {
 //   return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
