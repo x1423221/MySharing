@@ -1,6 +1,27 @@
 <template>
   <div class="group-container">
-    <div class="row align-items-start">
+    <div class="container-title">
+      <div class="title-container">
+        <button
+          id="btnGoHome"
+          class="btn btn-danger d-flex align-items-center justify-content-center"
+          @click="gotoHome"
+        >
+          <i class="bi bi-x-lg"></i>
+        </button>
+      </div>
+    </div>
+    <div class="row" v-for="(group, index) in result" :key="group.id">
+      <div class="row">
+        <h3>{{ group.name }}</h3>
+        <button
+          id="btnCreateNew"
+          class="btn btn-success"
+          @click="gotoGroup(index)"
+        ></button>
+      </div>
+    </div>
+    <!-- <div>
       <div class="col-2">
         <button class="btn btn-danger" @click="gotoHome">
           <i class="bi bi-x-lg"></i>
@@ -16,7 +37,7 @@
           @click="gotoGroup(index)"
         ></button>
       </div>
-    </div>
+    </div> -->
   </div>
 </template>
 
@@ -82,6 +103,23 @@ onMounted(async () => {
   height: 90vh;
   background: white;
   border-radius: 25px;
-  padding: 15px;
+}
+
+.container-title {
+  background: dimgrey;
+  border-radius: 25px 25px 0 0;
+}
+
+#btnGoHome {
+  border-radius: 50%; /* 圓角 100% 形成圓形 */
+  width: 20px;
+  height: 20px;
+  border: 1px solid red;
+  padding: 0; /* 移除額外的內間距 */
+}
+
+.title-container {
+  width: 150px;
+  margin-left: 15px;
 }
 </style>
