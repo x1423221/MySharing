@@ -19,7 +19,7 @@
 </template>
 
 <script setup>
-import { onMounted } from "vue";
+import { inject, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import { getFirestore, collection, getDocs } from "firebase/firestore";
 
@@ -28,6 +28,7 @@ const userId = route.query.id;
 
 onMounted(async () => {
   try {
+    const isLoading = inject("isLoading");
     const firebase = getFirestore();
     const dbcol = collection(firebase, "241229Test");
     const doclist = await getDocs(dbcol);
@@ -54,6 +55,7 @@ onMounted(async () => {
 
       console.log("處理後資料:" + filteredGroups);
       console.log(result);
+      isLoading.value = false;
     });
   } catch (err) {
     console.log(err);

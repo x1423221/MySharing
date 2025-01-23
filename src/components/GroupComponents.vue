@@ -18,12 +18,14 @@
 
 <script setup>
 import { useRoute } from "vue-router";
-import { onMounted, ref } from "vue";
+import { inject, onMounted, ref } from "vue";
 import { gotoHome } from "@/Router/Redirect";
 import liff from "@line/liff";
 
 onMounted(() => {
   try {
+    const isLoading = inject("isLoading");
+    isLoading.value = false;
     const groupDataString = sessionStorage.getItem("currentGroup");
     storedGroup.value = groupDataString;
   } catch (err) {
