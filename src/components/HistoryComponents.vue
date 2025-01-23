@@ -44,14 +44,13 @@ onMounted(async () => {
       const data = ele.data();
       const filteredGroups = Object.entries(data).filter(([key, value]) => {
         console.log("key:" + key);
-        return Object.entries(value).filter(([k, v]) => {
+        const tmpdata = Object.entries(value).filter(([k, v]) => {
           if (k == "members") {
-            console.log("includes:" + v.includes(userId));
             return v.includes(userId);
           }
         });
+        return tmpdata.length > 0;
       });
-      console.log("filteredGroups:" + filteredGroups);
 
       result.value = [
         ...result.value,
@@ -62,7 +61,6 @@ onMounted(async () => {
       ];
     });
 
-    console.log(result.value);
     isLoading.value = false;
   } catch (err) {
     console.log(err);
