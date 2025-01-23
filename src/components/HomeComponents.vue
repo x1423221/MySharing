@@ -145,21 +145,26 @@ const gotoGroup = async () => {
       console.log("資料:" + data);
       //const targetMember = "Uea43486b3bc11062986a319913daeb56"; // 目標成員
 
-      const filteredGroups = Object.entries(data).filter(([key, value]) => {
-        console.log("data.key" + key);
+      const filteredGroups = Object.entries(data).filter(([value]) => {
         Object.entries(value).filter(([k, v]) => {
-          console.log("value.key" + k);
-          console.log("value.value" + v);
+          if (k == "members") {
+            console.log("value.key" + k);
+            console.log("value.value" + v);
+            return (
+              Array.isArray(v.members) &&
+              v.members.includes(profile.value.userId)
+            );
+          }
         });
       });
 
-      // const result = filteredGroups.map(([key, value]) => ({
-      //   id: key,
-      //   ...value,
-      // }));
+      const result = filteredGroups.map(([key, value]) => ({
+        id: key,
+        ...value,
+      }));
 
       console.log("處理後資料:" + filteredGroups);
-      //console.log(result);
+      console.log(result);
     });
   } catch (err) {
     console.log(err);
