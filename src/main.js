@@ -1,5 +1,6 @@
 import 'bootstrap/dist/css/bootstrap.min.css'
 import 'bootstrap-icons/font/bootstrap-icons.css'
+import '../public/main.css'
 
 import App from './App.vue'
 import { createApp } from 'vue'
@@ -11,7 +12,7 @@ async function LiffInit() {
         liffId: '2006768109-93myxPab',
     }).then(() => {
         if (!liff.isLoggedIn()) {
-            liff.login({redirectUri:"https://x1423221.github.io/MySharing/"});
+            liff.login({ redirectUri: "https://x1423221.github.io/MySharing/" });
         }
     }).catch((err) => {
 
