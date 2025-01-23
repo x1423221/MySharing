@@ -47,7 +47,8 @@ onMounted(async () => {
         const members = Object.entries(value).filter(([k, v]) => {
           console.log("k:" + k);
           console.log("v:" + v);
-          return Array.isArray(v.members) && v.members.includes(userId);
+          console.log("type:" + typeof v);
+          return v.members.split(",").includes(userId);
         });
         console.log("members:" + members);
         return members;
