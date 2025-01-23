@@ -43,7 +43,7 @@ onMounted(async () => {
     doclist.forEach((ele) => {
       const data = ele.data();
       const filteredGroups = Object.entries(data).filter(([value]) => {
-        return Object.entries(value).filter(([k, v]) => {
+        return Object.entries(value).some(([k, v]) => {
           if (k == "members") {
             console.log("value.key:" + k);
             return Array.isArray(v.members) && v.members.includes(userId);
@@ -51,13 +51,15 @@ onMounted(async () => {
         });
       });
 
-      result.value = filteredGroups.map(([key, value]) => ({
-        id: key,
-        ...value,
-      }));
-
-      isLoading.value = false;
+      result.value = [
+        ...result.value,
+        ...filteredGroups.map(([key, value]) => ({
+          id: key,
+          ...value,
+        })),
+      ];
     });
+    isLoading.value = false;
   } catch (err) {
     console.log(err);
   }
