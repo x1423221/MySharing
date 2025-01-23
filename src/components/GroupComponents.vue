@@ -17,8 +17,9 @@
 </template>
 
 <script setup>
-import { useRouter, useRoute } from "vue-router";
+import { useRoute } from "vue-router";
 import { onMounted, ref } from "vue";
+import { gotoHome } from "@/Router/Redirect";
 import liff from "@line/liff";
 
 onMounted(() => {
@@ -30,14 +31,9 @@ onMounted(() => {
   }
 });
 
-const router = useRouter();
 const route = useRoute();
 const userId = route.query.id;
 const storedGroup = ref(null);
-
-const gotoHome = () => {
-  router.push("/");
-};
 
 const shareMember = () => {
   liff

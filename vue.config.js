@@ -4,5 +4,6 @@ module.exports = defineConfig({
   publicPath: '/MySharing/',
   devServer: {
     allowedHosts: ["all"],
-  }
+  },
+  outputDir: "docs"
 })
