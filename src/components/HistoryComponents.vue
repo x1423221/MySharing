@@ -49,11 +49,12 @@ onMounted(async () => {
             console.log("k:" + k);
             console.log("v:" + v);
             console.log("type:" + typeof v);
-            return Object.keys(v).includes(userId);
+            const membersArray = typeof v === "string" ? v.split(",") : [];
+            console.log("membersArray:", membersArray);
+            return membersArray.includes(userId);
           }
         });
         console.log("members:" + members);
-        return members;
       });
 
       result.value = [
