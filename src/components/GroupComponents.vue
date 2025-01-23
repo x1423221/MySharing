@@ -32,7 +32,7 @@ onMounted(() => {
   try {
     const isLoading = inject("isLoading");
     isLoading.value = false;
-    const groupDataString = sessionStorage.getItem("currentGroup");
+    const groupDataString = JSON.parse(sessionStorage.getItem("currentGroup"));
     userId.value = sessionStorage.getItem("id");
 
     storedGroup.value = groupDataString;

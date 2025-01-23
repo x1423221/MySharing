@@ -140,7 +140,7 @@ const gotoGroup = async () => {
         .then(() => console.log("Data saved successfully"))
         .catch((err) => console.error("Error saving data:", err));
     }
-    sessionStorage.setItem("currentGroup", splitallData.value);
+    sessionStorage.setItem("currentGroup", JSON.stringify(splitallData.value));
     sessionStorage.setItem("id", profile.value.userId);
   } catch (err) {
     console.log(err + "新增資料失敗");

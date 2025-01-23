@@ -34,7 +34,7 @@ const gotoHome = () => {
 };
 
 const gotoGroup = (index) => {
-  sessionStorage.setItem("currentGroup", result.value[index]);
+  sessionStorage.setItem("currentGroup", JSON.stringify(result.value[index]));
   sessionStorage.setItem("id", userId.value);
   router.push("/group");
 };
