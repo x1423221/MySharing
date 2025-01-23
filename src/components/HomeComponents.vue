@@ -146,10 +146,9 @@ const gotoGroup = async () => {
       //const targetMember = "Uea43486b3bc11062986a319913daeb56"; // 目標成員
 
       const filteredGroups = Object.entries(data).filter(([value]) => {
-        Object.entries(value).filter(([k, v]) => {
+        return Object.entries(value).filter(([k, v]) => {
           if (k == "members") {
-            console.log("value.key" + k);
-            console.log("value.value" + v);
+            console.log("value.key:" + k);
             return (
               Array.isArray(v.members) &&
               v.members.includes(profile.value.userId)
