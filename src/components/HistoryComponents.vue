@@ -46,10 +46,12 @@ onMounted(async () => {
         console.log("key:" + key);
         return Object.entries(value).filter(([k, v]) => {
           if (k == "members") {
+            console.log("includes:" + v.includes(userId));
             return v.includes(userId);
           }
         });
       });
+      console.log("filteredGroups:" + filteredGroups);
 
       result.value = [
         ...result.value,
@@ -59,6 +61,7 @@ onMounted(async () => {
         })),
       ];
     });
+
     console.log(result.value);
     isLoading.value = false;
   } catch (err) {
