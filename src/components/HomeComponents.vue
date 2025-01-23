@@ -139,12 +139,13 @@ const gotoGroup = async () => {
     const testref = collection(dv, "241229Test");
     const doclist = await getDocs(testref);
     //Uea43486b3bc11062986a319913daeb56
-    doclist.forEach((els) => {
-      const data = els.data();
+    doclist.forEach((ele) => {
+      const data = JSON.stringify(ele.data());
       console.log("資料:" + JSON.stringify(data));
       const targetMember = "Uea43486b3bc11062986a319913daeb56"; // 目標成員
 
-      const filteredGroups = Object.entries(data).filter((value) => {
+      const filteredGroups = Object.entries(data).filter(([key, value]) => {
+        console.log("key" + key);
         console.log("資料" + value);
         console.log("isArray" + Array.isArray(value.members));
         console.log("members" + value.members);
