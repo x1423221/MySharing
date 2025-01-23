@@ -24,7 +24,7 @@ import { getFirestore, collection, getDocs } from "firebase/firestore";
 import { useRouter } from "vue-router";
 
 const userId = ref(null);
-const result = ref(null);
+const result = ref([]);
 const router = useRouter();
 
 const gotoHome = () => {
