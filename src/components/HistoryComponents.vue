@@ -12,7 +12,7 @@
         <span>歷史紀錄</span>
       </div>
     </div>
-    <div>
+    <div class="card-container">
       <div class="card" v-for="(group, index) in result" :key="group.id">
         <h3>{{ group.name }}</h3>
         <button
@@ -83,4 +83,9 @@ onMounted(async () => {
 });
 </script>
 
-<style scoped></style>
+<style scoped>
+.card-container {
+  overflow-x: scroll;
+  height: 98%;
+}
+</style>

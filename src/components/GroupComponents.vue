@@ -16,9 +16,7 @@
         {{ storedGroup.name }}
       </div>
     </div>
-    <div class="row">
-      <button class="btn btn-success" @click="shareMember">分享</button>
-    </div>
+    <button class="btn btn-success" @click="shareMember">分享</button>
   </div>
 </template>
 
