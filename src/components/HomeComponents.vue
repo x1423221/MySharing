@@ -145,11 +145,11 @@ const gotoGroup = async () => {
       console.log("資料:" + data);
       //const targetMember = "Uea43486b3bc11062986a319913daeb56"; // 目標成員
 
-      const filteredGroups = Object.entries(ele).filter(([key, value]) => {
-        console.log(key);
+      const filteredGroups = Object.entries(data).filter(([key, value]) => {
+        console.log("data.key" + key);
         Object.entries(value).filter(([k, v]) => {
-          console.log("key" + k);
-          console.log("value" + v);
+          console.log("value.key" + k);
+          console.log("value.value" + v);
         });
       });
 
