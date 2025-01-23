@@ -44,10 +44,8 @@ onMounted(async () => {
       const data = ele.data();
       const filteredGroups = Object.entries(data).filter(([value]) => {
         return Object.entries(value).filter(([k, v]) => {
-          if (k == "members") {
-            console.log("value.key:" + k);
-            return Array.isArray(v.members) && v.members.includes(userId);
-          }
+          console.log("value.key:" + k);
+          return Array.isArray(v.members) && v.members.includes(userId);
         });
       });
 
