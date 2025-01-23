@@ -16,11 +16,21 @@
   height: 20px;
   border: 1px solid red;
   padding: 0; /* 移除額外的內間距 */
+  margin-left: 15px;
 }
 
 .title-container {
-  width: 150px;
-  margin-left: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+}
+
+.title-container > span {
+  color: white;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 .card {

@@ -9,17 +9,20 @@
         >
           <i class="bi bi-x-lg"></i>
         </button>
+        <span>歷史紀錄</span>
       </div>
     </div>
-    <div class="card" v-for="(group, index) in result" :key="group.id">
-      <h3>{{ group.name }}</h3>
-      <button
-        id="btnCreateNew"
-        class="btn btn-success"
-        @click="gotoGroup(index)"
-      >
-        前往{{ group.name }}
-      </button>
+    <div>
+      <div class="card" v-for="(group, index) in result" :key="group.id">
+        <h3>{{ group.name }}</h3>
+        <button
+          id="btnCreateNew"
+          class="btn btn-success"
+          @click="gotoGroup(index)"
+        >
+          前往{{ group.name }}
+        </button>
+      </div>
     </div>
   </div>
 </template>
