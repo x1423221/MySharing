@@ -140,18 +140,20 @@ const gotoGroup = async () => {
     const doclist = await getDocs(testref);
     //Uea43486b3bc11062986a319913daeb56
     doclist.forEach((ele) => {
-      const data = JSON.parse(ele.data());
-      console.log("資料:" + JSON.parse(data));
+      const data = ele.data();
+      console.log("資料:" + JSON.stringify(data));
       const targetMember = "Uea43486b3bc11062986a319913daeb56"; // 目標成員
 
-      const filteredGroups = Object.entries(data).filter(([key, value]) => {
-        console.log("key" + key);
-        console.log("資料" + value);
-        console.log("isArray" + Array.isArray(value.members));
-        console.log("members" + value.members);
-        return (
-          Array.isArray(value.members) && value.members.includes(targetMember)
-        );
+      const filteredGroups = data.forEach((ele) => {
+        Object.entries(ele).filter(([key, value]) => {
+          console.log("key" + key);
+          console.log("資料" + value);
+          console.log("isArray" + Array.isArray(value.members));
+          console.log("members" + value.members);
+          return (
+            Array.isArray(value.members) && value.members.includes(targetMember)
+          );
+        });
       });
 
       const result = filteredGroups.map(([key, value]) => ({
