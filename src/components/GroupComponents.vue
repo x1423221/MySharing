@@ -17,10 +17,11 @@
 </template>
 
 <script setup>
-import { inject, onMounted, ref, useRouter } from "vue";
+import { inject, onMounted, ref } from "vue";
+import { useRoute, useRouter } from "vue-router";
 import liff from "@line/liff";
 
-const route = useRouter();
+const route = useRoute();
 const storedGroup = ref(null);
 const userId = ref(null);
 onMounted(() => {
