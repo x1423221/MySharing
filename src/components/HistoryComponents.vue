@@ -42,16 +42,29 @@ onMounted(async () => {
 
     doclist.forEach((ele) => {
       const data = ele.data();
+      // const filteredGroups = Object.entries(data).filter(([key, value]) => {
+      //   console.log("key:" + key);
+      //   const tmpdata = Object.entries(value).filter(([k, v]) => {
+      //     if (k == "members") {
+      //       return v.includes(userId);
+      //     }
+      //   });
+      //   console.log("tmpdata:" + tmpdata);
+      //   return tmpdata.length > 0;
+      // });
+
       const filteredGroups = Object.entries(data).filter(([key, value]) => {
         console.log("key:" + key);
-        const tmpdata = Object.entries(value).filter(([k, v]) => {
+        console.log("value:" + value);
+        const aw = Object.entries(value).filter(([k, v]) => {
           if (k == "members") {
             return v.includes(userId);
           }
         });
-        console.log("tmpdata:" + tmpdata);
-        return tmpdata.length > 0;
+        console.log("aw:" + aw);
+        return aw.length > 0;
       });
+
       console.log("filteredGroups:" + filteredGroups);
 
       result.value = [
