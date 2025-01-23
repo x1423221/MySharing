@@ -17,25 +17,29 @@
 </template>
 
 <script setup>
-import { useRoute } from "vue-router";
-import { inject, onMounted, ref } from "vue";
-import { gotoHome } from "@/Router/Redirect";
+import { inject, onMounted, ref, useRouter } from "vue";
 import liff from "@line/liff";
 
+const route = useRouter();
+const storedGroup = ref(null);
+const userId = ref(null);
 onMounted(() => {
   try {
     const isLoading = inject("isLoading");
     isLoading.value = false;
     const groupDataString = sessionStorage.getItem("currentGroup");
+    userId.value = sessionStorage.getItem("id");
+
     storedGroup.value = groupDataString;
   } catch (err) {
     alert(err);
   }
 });
 
-const route = useRoute();
-const userId = route.query.id;
-const storedGroup = ref(null);
+const gotoHome = () => {
+  const router = useRouter();
+  router.push("/");
+};
 
 const shareMember = () => {
   liff
@@ -44,7 +48,7 @@ const shareMember = () => {
         {
           type: "text",
           text: `Hi!這是給你的分帳連結${
-            window.location.origin + route.fullPath + "?groupId=" + userId
+            window.location.origin + route.fullPath + "?groupId=" + userId.value
           }`,
         },
       ],

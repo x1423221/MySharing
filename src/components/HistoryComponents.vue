@@ -7,7 +7,7 @@
         </button>
       </div>
     </div>
-    <div class="row" v-for="i in result" :key="i.key">
+    <div class="row" v-for="i in result.value" :key="i.key">
       <div>
         {{ i.key }}
       </div>
@@ -19,16 +19,21 @@
 </template>
 
 <script setup>
-import { inject, onMounted } from "vue";
-import { useRoute } from "vue-router";
+import { inject, onMounted, useRouter, ref } from "vue";
 import { getFirestore, collection, getDocs } from "firebase/firestore";
 
-const route = useRoute();
-const userId = route.query.id;
+const userId = ref(null);
+
+const gotoHome = () => {
+  const router = useRouter();
+  router.push("/");
+};
 
 onMounted(async () => {
   try {
     const isLoading = inject("isLoading");
+    userId.value = sessionStorage.getItem("id");
+
     const firebase = getFirestore();
     const dbcol = collection(firebase, "241229Test");
     const doclist = await getDocs(dbcol);
@@ -63,4 +68,12 @@ onMounted(async () => {
 });
 </script>
 
-<style scoped></style>
+<style scoped>
+.group-container {
+  width: 80vw;
+  height: 90vh;
+  background: white;
+  border-radius: 25px;
+  padding: 15px;
+}
+</style>

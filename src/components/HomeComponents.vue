@@ -141,15 +141,17 @@ const gotoGroup = async () => {
         .catch((err) => console.error("Error saving data:", err));
     }
     sessionStorage.setItem("currentGroup", splitallData.value.toMap());
+    sessionStorage.setItem("id", profile.value.userId);
   } catch (err) {
     console.log(err + "新增資料失敗");
   }
-  router.push({ path: "/group", query: { id: profile.value.userId } });
+  router.push({ path: "/group" });
 };
 
 const gotoHistory = async () => {
   isLoading.value = true;
-  router.push({ path: "/history", query: { id: profile.value.userId } });
+  sessionStorage.setItem("id", profile.value.userId);
+  router.push({ path: "/history" });
 };
 </script>
 
