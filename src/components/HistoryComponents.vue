@@ -7,7 +7,7 @@
         </button>
       </div>
     </div>
-    <div class="row" v-for="group in result.value" :key="group.id">
+    <div class="row" v-for="group in result" :key="group.id">
       <div>
         <h3>{{ group.name }}</h3>
         <p>Group ID: {{ group.id }}</p>
@@ -59,7 +59,7 @@ onMounted(async () => {
         })),
       ];
     });
-
+    console.log(result.value);
     isLoading.value = false;
   } catch (err) {
     console.log(err);
