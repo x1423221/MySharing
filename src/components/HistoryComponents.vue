@@ -44,17 +44,11 @@ onMounted(async () => {
       const data = ele.data();
       const filteredGroups = Object.entries(data).filter(([key, value]) => {
         console.log("key:" + key);
-        const members = Object.entries(value).filter(([k, v]) => {
+        return Object.entries(value).filter(([k, v]) => {
           if (k == "members") {
-            console.log("k:" + k);
-            console.log("v:" + v);
-            console.log("type:" + typeof v);
-            const membersArray = typeof v === "string" ? v.split(",") : [];
-            console.log("membersArray:", membersArray);
-            return membersArray.includes(userId);
+            return v.includes(userId);
           }
         });
-        console.log("members:" + members);
       });
 
       result.value = [
