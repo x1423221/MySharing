@@ -45,10 +45,12 @@ onMounted(async () => {
       const filteredGroups = Object.entries(data).filter(([key, value]) => {
         console.log("key:" + key);
         const members = Object.entries(value).filter(([k, v]) => {
-          console.log("k:" + k);
-          console.log("v:" + v);
-          console.log("type:" + typeof v);
-          return v.members.includes(userId);
+          if (k == "members") {
+            console.log("k:" + k);
+            console.log("v:" + v);
+            console.log("type:" + typeof v);
+            return Object.keys(v).includes(userId);
+          }
         });
         console.log("members:" + members);
         return members;
