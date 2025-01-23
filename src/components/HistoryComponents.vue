@@ -35,7 +35,7 @@ onMounted(async () => {
   try {
     const isLoading = inject("isLoading");
     userId.value = sessionStorage.getItem("id");
-
+    console.log("userId:" + userId.value);
     const firebase = getFirestore();
     const dbcol = collection(firebase, "241229Test");
     const doclist = await getDocs(dbcol);
@@ -58,7 +58,7 @@ onMounted(async () => {
         console.log("value:" + value);
         const aw = Object.entries(value).filter(([k, v]) => {
           if (k == "members") {
-            return v.includes(userId);
+            return v.includes(userId.value);
           }
         });
         console.log("aw:" + aw);
