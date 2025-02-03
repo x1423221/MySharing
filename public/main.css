@@ -18,12 +18,14 @@
   border: 1px solid red;
   padding: 0; /* 移除額外的內間距 */
   margin-left: 15px;
+  position: absolute;
+  left: 0;
 }
 
 .title-container {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   position: relative;
 }
 
@@ -32,6 +34,8 @@
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
+  flex-grow: 1;
+  text-align: center;
 }
 
 .card {

@@ -124,28 +124,30 @@ const gotoGroup = async () => {
   try {
     const docRef = doc(db, "241229Test", profile.value.userId);
     const docSnap = await getDoc(docRef);
-
+    const RID = crypto.randomUUID();
     splitallData.value = new SplitData(`${profile.value.displayName}的群組`);
     //已經存在這個文件
     if (docSnap.exists()) {
       await updateDoc(docRef, {
-        [crypto.randomUUID()]: splitallData.value.toMap(),
+        [`${RID}`]: splitallData.value.toMap(),
       });
     }
     //否則新增文件並新增群組
     else {
       await setDoc(docRef, {
-        [crypto.randomUUID()]: splitallData.value.toMap(),
+        [`${RID}`]: splitallData.value.toMap(),
       })
         .then(() => console.log("Data saved successfully"))
         .catch((err) => console.error("Error saving data:", err));
     }
+    splitallData.value = { ...splitallData.value, id: RID };
     sessionStorage.setItem("currentGroup", JSON.stringify(splitallData.value));
     sessionStorage.setItem("id", profile.value.userId);
+    router.push({ path: "/group" });
   } catch (err) {
-    console.log(err + "新增資料失敗");
+    alert(err + "新增資料失敗");
+    isLoading.value = false;
   }
-  router.push({ path: "/group" });
 };
 
 const gotoHistory = async () => {

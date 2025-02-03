@@ -9,7 +9,9 @@
         >
           <i class="bi bi-x-lg"></i>
         </button>
-        <span>歷史紀錄</span>
+        <div>
+          <span>歷史紀錄</span>
+        </div>
       </div>
     </div>
     <div class="card-container">
@@ -57,23 +59,33 @@ onMounted(async () => {
 
     doclist.forEach((ele) => {
       const data = ele.data();
-      const filteredGroups = Object.entries(data).filter(([key, value]) => {
-        console.log("key:" + key);
-        const tmpdata = Object.entries(value).filter(([k, v]) => {
-          if (k == "members") {
-            return v.includes(userId.value);
-          }
-        });
-        return tmpdata.length > 0;
-      });
-
-      result.value = [
-        ...result.value,
-        ...filteredGroups.map(([key, value]) => ({
+      if (ele.id === userId.value) {
+        const tmpdata = Object.entries(data).map(([key, value]) => ({
           id: key,
           ...value,
-        })),
-      ];
+        }));
+
+        result.value = [...result.value, ...tmpdata];
+        return; // 直接跳過後續篩選
+      }
+
+      const filteredGroups = Object.entries(data)
+        .filter(([key, value]) => {
+          console.log("key:", key);
+
+          // 篩選 `members` 陣列是否包含 `userId.value`
+          return Object.entries(value).some(([k, v]) => {
+            return (
+              k === "members" && Array.isArray(v) && v.includes(userId.value)
+            );
+          });
+        })
+        .map(([key, value]) => ({
+          id: key, // 確保 `id` 是單獨的欄位
+          ...value,
+        }));
+
+      result.value = [...result.value, ...filteredGroups];
     });
 
     isLoading.value = false;

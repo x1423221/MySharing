@@ -8,7 +8,7 @@ export class Member {
     toMap() {
         return {
             userid: this.userid,
-            name : this.name
+            name: this.name
         };
     }
 }
