@@ -14,8 +14,9 @@ export class Member {
 }
 
 export class Transaction {
-    constructor(id, payer, amount, description, date, split = []) {
+    constructor(id, userid, payer, amount, description, date, split = []) {
         this.id = id;
+        this.userid = userid;
         this.payer = payer;
         this.amount = amount;
         this.description = description;
@@ -25,7 +26,9 @@ export class Transaction {
 
     toMap() {
         return {
+            isLock: false,
             id: this.id,
+            userid: this.userid,
             payer: this.payer,
             amount: this.amount,
             description: this.description,

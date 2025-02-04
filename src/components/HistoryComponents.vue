@@ -34,7 +34,6 @@ import { inject, onMounted, ref } from "vue";
 import { getFirestore, collection, getDocs } from "firebase/firestore";
 import { useRouter } from "vue-router";
 
-const userId = ref(null);
 const result = ref([]);
 const router = useRouter();
 
@@ -43,23 +42,21 @@ const gotoHome = () => {
 };
 
 const gotoGroup = (index) => {
+  console.log(index);
   sessionStorage.setItem("currentGroup", JSON.stringify(result.value[index]));
-  sessionStorage.setItem("id", userId.value);
   router.push("/group");
 };
 
 onMounted(async () => {
   try {
     const isLoading = inject("isLoading");
-    userId.value = sessionStorage.getItem("id");
-    console.log("userId:" + userId.value);
     const firebase = getFirestore();
     const dbcol = collection(firebase, "241229Test");
     const doclist = await getDocs(dbcol);
 
     doclist.forEach((ele) => {
       const data = ele.data();
-      if (ele.id === userId.value) {
+      if (ele.id === sessionStorage.getItem("id")) {
         const tmpdata = Object.entries(data).map(([key, value]) => ({
           id: key,
           ...value,
@@ -76,7 +73,9 @@ onMounted(async () => {
           // 篩選 `members` 陣列是否包含 `userId.value`
           return Object.entries(value).some(([k, v]) => {
             return (
-              k === "members" && Array.isArray(v) && v.includes(userId.value)
+              k === "members" &&
+              Array.isArray(v) &&
+              v.includes(sessionStorage.getItem("id"))
             );
           });
         })

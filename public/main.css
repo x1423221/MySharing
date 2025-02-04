@@ -29,13 +29,13 @@
   position: relative;
 }
 
-.title-container > span {
+.title-container > div > span {
   color: white;
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  flex-grow: 1;
-  text-align: center;
+}
+
+.title-container > div > i {
+  color: white;
+  padding: 5px;
 }
 
 .card {

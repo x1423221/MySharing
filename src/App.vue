@@ -80,7 +80,9 @@ const generateGUID = () => {
 <template>
   <div v-if="isLoading" class="overlay">
     <div class="spinner"></div>
+    <span class="txtLoading">Loading</span>
   </div>
+
   <router-view></router-view>
 </template>
 
@@ -100,6 +102,7 @@ provide("isLoading", isLoading); // 提供加载状态给子组件
   height: 100vh;
   background: rgba(0, 0, 0, 0.5);
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   z-index: 1000;
@@ -112,6 +115,10 @@ provide("isLoading", isLoading); // 提供加载状态给子组件
   width: 50px;
   height: 50px;
   animation: spin 1s linear infinite;
+}
+
+.txtLoading {
+  color: white;
 }
 
 @keyframes spin {

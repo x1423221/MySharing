@@ -114,6 +114,8 @@ onMounted(async () => {
     })
     .finally(() => {
       isLoading.value = false;
+      sessionStorage.setItem("id", profile.value.userId);
+      sessionStorage.setItem("displayName", profile.value.displayName);
     });
 });
 
@@ -142,7 +144,6 @@ const gotoGroup = async () => {
     }
     splitallData.value = { ...splitallData.value, id: RID };
     sessionStorage.setItem("currentGroup", JSON.stringify(splitallData.value));
-    sessionStorage.setItem("id", profile.value.userId);
     router.push({ path: "/group" });
   } catch (err) {
     alert(err + "新增資料失敗");
@@ -152,7 +153,7 @@ const gotoGroup = async () => {
 
 const gotoHistory = async () => {
   isLoading.value = true;
-  sessionStorage.setItem("id", profile.value.userId);
+
   router.push({ path: "/history" });
 };
 </script>
