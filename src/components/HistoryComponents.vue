@@ -37,7 +37,6 @@ const historyRecords = ref([]);
 const router = useRouter();
 
 const gotoGroup = (index) => {
-  alert(JSON.stringify(historyRecords.value[index]));
   sessionStorage.setItem(
     "currentGroup",
     JSON.stringify(historyRecords.value[index])

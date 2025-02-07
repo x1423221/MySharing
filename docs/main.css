@@ -1,5 +1,7 @@
 .group-container {
-  width: 80vw;
+  display: grid;
+  grid-template-rows: 25px auto 40px;
+  width: 98vw;
   height: 98vh;
   background: white;
   border-radius: 25px;
@@ -39,6 +41,8 @@
 }
 
 .container-body {
+  overflow-y: auto;
+  height: 90%;
   padding: 10px;
 }
 

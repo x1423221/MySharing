@@ -41,24 +41,26 @@
 
       <div>
         <h3>帳目列表</h3>
-        <div v-for="d in TransactionList" :key="d.id" class="card">
-          <div class="card-body">
-            <h5 class="card-title">{{ d.description }}</h5>
-            金額:<span>{{ d.amount }}</span>
-            <div v-if="!d.isLock">
-              <button
-                class="btn btn-primary"
-                data-bs-target="#exampleModal"
-                @click="showModal(d)"
-              >
-                編輯
-              </button>
+        <div class="TransactionList">
+          <div v-for="d in TransactionList" :key="d.id" class="card">
+            <div class="card-body">
+              <h5 class="card-title">{{ d.description }}</h5>
+              金額:<span>{{ d.amount }}</span>
+              <div v-if="!d.isLock">
+                <button
+                  class="btn btn-primary"
+                  data-bs-target="#exampleModal"
+                  @click="showModal(d)"
+                >
+                  編輯
+                </button>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-    <div>
+    <div class="btnArea">
       <button class="btn btn-success" @click="shareMember">分享</button>
       <button class="btn btn-success" @click="NewTransaction">新增帳目</button>
     </div>
@@ -70,7 +72,7 @@ import liff from "@line/liff";
 import db from "../firebase/config";
 import BtnGotoHomePage from "./BtnGotoHomePage.vue";
 import { inject, onMounted, reactive, ref, onUnmounted } from "vue";
-import { doc, updateDoc, setDoc, getDoc, onSnapshot } from "firebase/firestore";
+import { doc, updateDoc, setDoc, onSnapshot, getDoc } from "firebase/firestore";
 import { Transaction, TransactionDetail } from "../Models/SplitModels";
 import PaymentComponents from "./PaymentComponents.vue";
 
@@ -84,7 +86,7 @@ const TransactionList = ref([]);
 const TransactionData = ref([]);
 const paymentsList = ref([]);
 const XsModal = ref(null);
-
+const groupId = ref(null);
 let isLoading;
 
 onMounted(async () => {
@@ -97,10 +99,10 @@ onMounted(async () => {
     userName.value = sessionStorage.getItem("displayName");
     storedGroup = groupDataString;
     groupName.value = storedGroup.name;
-    const groupId = storedGroup.id;
+    groupId.value = storedGroup.id;
 
     if (storedGroup && groupId) {
-      fetchTransactions(groupId);
+      fetchTransactions(groupId.value);
     }
   } catch (err) {
     alert(err);
@@ -156,6 +158,7 @@ const NewTransaction = async () => {
         [`${RID}`]: transaction,
       });
     }
+
     isLoading.value = false;
   } catch (err) {
     alert(err);
@@ -278,16 +281,18 @@ const fetchTransactions = async (groupId) => {
           const userName = split.userName;
           const share = parseFloat(split.share) * -1; // 轉換成負值
 
-          isExsist = TransactionData.value.find((record) => {
-            return record.userId === userId;
-          });
+          if (userId != value.userId) {
+            isExsist = TransactionData.value.find((record) => {
+              return record.userId === userId;
+            });
 
-          if (isExsist) {
-            isExsist.splitAmount -= share;
-          } else {
-            TransactionData.value.push(
-              new TransactionDetail(userId, userName, share)
-            );
+            if (isExsist) {
+              isExsist.splitAmount += share;
+            } else {
+              TransactionData.value.push(
+                new TransactionDetail(userId, userName, share)
+              );
+            }
           }
         });
       });
@@ -308,8 +313,23 @@ const fetchTransactions = async (groupId) => {
   });
 };
 
-const showModal = (payment) => {
-  XsModal.value.showModal(payment, storedGroup.members);
+const showModal = async (payment) => {
+  const transListdocRef = doc(db, "transactionList", groupId.value);
+  //const TransactionListnap = await getDoc(transListdocRef);
+  isLoading.value = true;
+  await updateDoc(transListdocRef, {
+    [`${payment.id}.isLock`]: true,
+  });
+
+  XsModal.value.showModal(
+    payment,
+    storedGroup.members,
+    groupId.value,
+    userId,
+    userName
+  );
+
+  isLoading.value = false;
 };
 </script>
 
@@ -318,5 +338,11 @@ const showModal = (payment) => {
   background-color: #bebebe;
   padding: 5px;
   margin: 5px;
+}
+
+.btnArea {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 </style>
