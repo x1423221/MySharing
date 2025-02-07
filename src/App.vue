@@ -88,9 +88,10 @@ const generateGUID = () => {
 
 <script setup>
 import { provide, ref } from "vue";
-const isLoading = ref(false); // 全局加载状态
+const isLoading = ref(false);
 
-provide("isLoading", isLoading); // 提供加载状态给子组件
+//設定讀取旗標給子元件使用
+provide("isLoading", isLoading);
 </script>
 
 <style scoped>

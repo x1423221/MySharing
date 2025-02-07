@@ -44,15 +44,22 @@ const gotoGroup = (index) => {
   router.push("/group");
 };
 
+//註冊階段
 onMounted(async () => {
   try {
+    //取得父元件的讀取標籤
     const isLoading = inject("isLoading");
+
+    //取得分帳資料集合內的所有文件
     const firebase = getFirestore();
     const dbcol = collection(firebase, "241229Test");
     const doclist = await getDocs(dbcol);
 
+    //過濾出文件Id是自己或者members中有自己的資料
     doclist.forEach((ele) => {
       const data = ele.data();
+
+      //過濾文件id是自己的
       if (ele.id === sessionStorage.getItem("id")) {
         const tmpdata = Object.entries(data).map(([key, value]) => ({
           id: key,
@@ -63,6 +70,7 @@ onMounted(async () => {
         return; // 直接跳過後續篩選
       }
 
+      //過濾members欄位中有自己的
       const filteredGroups = Object.entries(data)
         .filter(([key, value]) => {
           console.log("key:", key);
