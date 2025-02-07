@@ -2,71 +2,106 @@
   <div class="group-container">
     <div class="container-title">
       <div class="title-container">
-        <button
-          id="btnGoHome"
-          class="btn btn-danger d-flex align-items-center justify-content-center"
-          @click="gotoHome"
-        >
-          <i class="bi bi-x-lg"></i>
-        </button>
-        <div v-if="storedGroup && !IsEdit">
+        <BtnGotoHomePage></BtnGotoHomePage>
+        <div v-if="storedGroup && !isEdit">
           <span>{{ storedGroup.name }}</span>
           <i class="bi bi-pencil" @click="EditGroupName"></i>
         </div>
-        <div v-if="storedGroup && IsEdit">
-          <input type="text" style="width: 150px" v-model="GroupName" />
+        <div v-if="storedGroup && isEdit">
+          <input type="text" style="width: 150px" v-model="groupName" />
           <i class="bi bi-check-circle" @click="SaveGroupName"></i>
           <i class="bi bi-x-circle" @click="EditGroupName"></i>
         </div>
       </div>
     </div>
-    <div class="row">
-      <h3>帳目列表</h3>
-      <!-- <div
-        v-for="(d, index) in storedGroup.transactions"
-        :key="index"
-        class="detail"
-      >
-        <span>{{ d.description }}</span>
-      </div> -->
-    </div>
-    <div class="row">
-      <h3>即時統計</h3>
-      <div></div>
-    </div>
+    <div class="container-body">
+      <PaymentComponents ref="XsModal"></PaymentComponents>
+      <div>
+        <h3>即時統計</h3>
+        <div>
+          <div v-for="(user, index) in TransactionData" :key="index">
+            <span>使用者 ID: {{ user.userName }},</span>
+            <span v-if="user.splitAmount > 0">支出</span>
+            <span v-else>需支付:</span>
+            {{
+              user.splitAmount > 0 ? user.splitAmount : user.splitAmount * -1
+            }}
+            元
+          </div>
+        </div>
+      </div>
+      <div>
+        <h3>建議付款方案</h3>
+        <ul>
+          <li v-for="(payment, index) in paymentsList" :key="index">
+            {{ payment.from }} 應支付 {{ payment.amount }} 元給 {{ payment.to }}
+          </li>
+        </ul>
+      </div>
 
-    <button class="btn btn-success" @click="shareMember">分享</button>
-    <button class="btn btn-success" @click="NewTransaction">新增帳目</button>
+      <div>
+        <h3>帳目列表</h3>
+        <div v-for="d in TransactionList" :key="d.id" class="card">
+          <div class="card-body">
+            <h5 class="card-title">{{ d.description }}</h5>
+            金額:<span>{{ d.amount }}</span>
+            <div v-if="!d.isLock">
+              <button
+                class="btn btn-primary"
+                data-bs-target="#exampleModal"
+                @click="showModal(d)"
+              >
+                編輯
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <button class="btn btn-success" @click="shareMember">分享</button>
+      <button class="btn btn-success" @click="NewTransaction">新增帳目</button>
+    </div>
   </div>
 </template>
 
 <script setup>
-import { inject, onMounted, ref } from "vue";
-import { useRouter } from "vue-router";
 import liff from "@line/liff";
 import db from "../firebase/config";
-import { doc, updateDoc, setDoc, arrayUnion } from "firebase/firestore";
-import { Transaction } from "../Models/SplitModels";
+import BtnGotoHomePage from "./BtnGotoHomePage.vue";
+import { inject, onMounted, reactive, ref, onUnmounted } from "vue";
+import { doc, updateDoc, setDoc, getDoc, onSnapshot } from "firebase/firestore";
+import { Transaction, TransactionDetail } from "../Models/SplitModels";
+import PaymentComponents from "./PaymentComponents.vue";
 
-const router = useRouter();
-const storedGroup = ref(null);
+let storedGroup = reactive({});
 const userId = ref(null);
 const userName = ref("");
-const IsEdit = ref(false);
-const GroupName = ref("");
+const isEdit = ref(false);
+const groupName = ref("");
+
 const TransactionList = ref([]);
+const TransactionData = ref([]);
+const paymentsList = ref([]);
+const XsModal = ref(null);
+
 let isLoading;
 
-onMounted(() => {
+onMounted(async () => {
   try {
     isLoading = inject("isLoading");
+    isLoading.value = true;
+
     const groupDataString = JSON.parse(sessionStorage.getItem("currentGroup"));
-    alert(JSON.stringify(groupDataString));
     userId.value = sessionStorage.getItem("id");
     userName.value = sessionStorage.getItem("displayName");
-    storedGroup.value = groupDataString;
-    GroupName.value = storedGroup.value.name;
-    TransactionList.value = storedGroup.value.transactions;
+    storedGroup = groupDataString;
+    groupName.value = storedGroup.name;
+    const groupId = storedGroup.id;
+
+    if (storedGroup && groupId) {
+      fetchTransactions(groupId);
+    }
   } catch (err) {
     alert(err);
   } finally {
@@ -74,19 +109,71 @@ onMounted(() => {
   }
 });
 
-const gotoHome = () => {
-  router.push("/");
+const EditGroupName = () => {
+  isEdit.value = !isEdit.value;
+};
+
+const SaveGroupName = async () => {
+  try {
+    isLoading.value = true;
+    storedGroup.name = groupName.value;
+    const docRef = doc(db, "241229Test", userId.value);
+    await updateDoc(docRef, {
+      [`${storedGroup.id}.name`]: storedGroup.name,
+    });
+
+    isEdit.value = !isEdit.value;
+    isLoading.value = false;
+  } catch (err) {
+    alert(err);
+  }
+};
+
+const NewTransaction = async () => {
+  //id, payer, amount, description, date, split = [];
+  const RID = crypto.randomUUID();
+  const transaction = new Transaction(
+    userId.value,
+    userName.value,
+    0,
+    userName.value + "創建",
+    new Date()
+  ).toMap();
+
+  try {
+    isLoading.value = true;
+    const TransactionListdoc = doc(db, "transactionList", storedGroup.id);
+    const TransactionListnap = await getDoc(TransactionListdoc);
+
+    if (TransactionListnap.exists()) {
+      await updateDoc(TransactionListdoc, {
+        [`${RID}`]: transaction,
+      });
+    }
+    //否則新增文件並新增群組
+    else {
+      await setDoc(TransactionListdoc, {
+        [`${RID}`]: transaction,
+      });
+    }
+    isLoading.value = false;
+  } catch (err) {
+    alert(err);
+  }
 };
 
 const shareMember = () => {
   try {
+    const groupId = storedGroup.id; // 取得當前群組 ID
+    const currentUrl = "https://liff.line.me/2006768109-93myxPab" + "/home"; // 取得當前頁面網址
+    const shareUrl = `${currentUrl}?u=${userId.value}&g=${groupId}`; // 組合分享連結
     //alert(liff.isApiAvailable("shareTargetPicker"));
     liff
       .shareTargetPicker(
         [
           {
             type: "text",
-            text: `Hi!這是給你的分帳連結`,
+            text: `Hi! 這是你的分帳連結，點擊加入群組：\n${shareUrl}`,
           },
         ],
         {
@@ -111,57 +198,125 @@ const shareMember = () => {
   }
 };
 
-const EditGroupName = () => {
-  IsEdit.value = !IsEdit.value;
+const calculatePayments = () => {
+  let transactions = [];
+
+  // 1️⃣ 先計算每個人的 "淨支出" (netAmount)
+  let balances = TransactionData.value.map((user) => ({
+    userName: user.userName,
+    netAmount: user.splitAmount,
+  }));
+
+  // 2️⃣ 把欠錢的人 (debtors) 和 多付錢的人 (creditors) 分開
+  let debtors = balances.filter((user) => user.netAmount < 0);
+  let creditors = balances.filter((user) => user.netAmount > 0);
+
+  // 3️⃣ 讓欠錢的 (debtors) 依序還款給多付錢的 (creditors)
+  let payments = [];
+
+  while (debtors.length > 0 && creditors.length > 0) {
+    let debtor = debtors[0]; // 取第一個欠錢的人
+    let creditor = creditors[0]; // 取第一個多付錢的人
+
+    let paymentAmount = Math.min(
+      Math.abs(debtor.netAmount),
+      creditor.netAmount
+    );
+
+    // 記錄這筆付款
+    payments.push({
+      from: debtor.userName,
+      to: creditor.userName,
+      amount: paymentAmount,
+    });
+
+    // 更新 debtor, creditor 的餘額
+    debtor.netAmount += paymentAmount;
+    creditor.netAmount -= paymentAmount;
+
+    // 移除 netAmount 變成 0 的人
+    if (debtor.netAmount === 0) debtors.shift();
+    if (creditor.netAmount === 0) creditors.shift();
+  }
+
+  // 4️⃣ 更新 Vue 變數，讓畫面可以顯示
+  transactions = payments;
+  return transactions;
 };
 
-const SaveGroupName = async () => {
-  try {
-    isLoading.value = true;
-    storedGroup.value.name = GroupName.value;
-    const docRef = doc(db, "241229Test", userId.value);
-    await updateDoc(docRef, {
-      [`${storedGroup.value.id}.name`]: GroupName.value,
-    });
+const fetchTransactions = async (groupId) => {
+  const transListdocRef = doc(db, "transactionList", groupId);
 
-    IsEdit.value = !IsEdit.value;
-    isLoading.value = false;
-  } catch (err) {
-    alert(err);
-  }
+  // 設置 Firebase 監聽
+  const unsubscribe = onSnapshot(transListdocRef, (docSnap) => {
+    TransactionList.value = [];
+    TransactionData.value = [];
+    paymentsList.value = [];
+    if (docSnap.exists()) {
+      const data = docSnap.data();
+      const tmpdata = Object.entries(data).map(([key, value]) => ({
+        id: key,
+        ...value,
+      }));
+      TransactionList.value = tmpdata;
+
+      TransactionList.value.forEach((value) => {
+        let isExsist = TransactionData.value.find((record) => {
+          return record.userId == value.userId;
+        });
+
+        if (isExsist) {
+          isExsist.splitAmount += value.amount;
+        } else {
+          TransactionData.value.push(
+            new TransactionDetail(value.userId, value.payer, value.amount)
+          );
+        }
+
+        value.split.forEach((split) => {
+          const userId = split.userId;
+          const userName = split.userName;
+          const share = parseFloat(split.share) * -1; // 轉換成負值
+
+          isExsist = TransactionData.value.find((record) => {
+            return record.userId === userId;
+          });
+
+          if (isExsist) {
+            isExsist.splitAmount -= share;
+          } else {
+            TransactionData.value.push(
+              new TransactionDetail(userId, userName, share)
+            );
+          }
+        });
+      });
+      paymentsList.value = calculatePayments(); // 每次 Firebase 資料變動時更新統計數據
+
+      paymentsList.value.sort((a, b) => b.amount - a.amount);
+      TransactionList.value.sort((a, b) => new Date(b.date) - new Date(a.date));
+      TransactionData.value.sort((a, b) => a.splitAmount - b.splitAmount);
+    } else {
+      TransactionList.value = [];
+      TransactionData.value = [];
+    }
+  });
+
+  // 當組件卸載時，停止監聽
+  onUnmounted(() => {
+    unsubscribe();
+  });
 };
 
-const NewTransaction = async () => {
-  //id, payer, amount, description, date, split = [];
-  const RID = crypto.randomUUID();
-  const transaction = new Transaction(
-    RID,
-    userId.value,
-    userName.value,
-    0,
-    userName.value + "創建",
-    new Date()
-  ).toMap();
-
-  try {
-    isLoading.value = true;
-    const TransactionListdoc = doc(db, "transactionList", storedGroup.value.id);
-
-    await setDoc(TransactionListdoc, {
-      [`${storedGroup.value.id}`]: transaction,
-    });
-
-    //後面要再補充這邊的邏輯
-    const docRef = doc(db, "241229Test", userId.value);
-    await updateDoc(docRef, {
-      [`${storedGroup.value.id}.transactions`]: arrayUnion(RID),
-    });
-
-    isLoading.value = false;
-  } catch (err) {
-    alert(err);
-  }
+const showModal = (payment) => {
+  XsModal.value.showModal(payment, storedGroup.members);
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+.detail {
+  background-color: #bebebe;
+  padding: 5px;
+  margin: 5px;
+}
+</style>

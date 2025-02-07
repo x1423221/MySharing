@@ -1,91 +1,12 @@
-<!-- <template>
-  <div>
-    <button class="btn btn-success" @click="handleAction('CreateGroup')">
-      建立群組
-    </button>
-    <button class="btn btn-success" @click="handleAction('addMember')">
-      新增成員
-    </button>
-    <button class="btn btn-success" @click="handleAction('addTransaction')">
-      新增交易
-    </button>
-    <button class="btn btn-success" @click="handleAction('addSplit')">
-      新增分割
-    </button>
-    <div>
-      <textarea v-model="jdata" style="height: 500px; width: 50vw" />
-    </div>
-  </div>
-</template>
-
-<script setup>
-import { ref } from "vue";
-import db from "../src/firebase/config";
-import { doc, setDoc } from "firebase/firestore";
-import { Member, SplitData, Transaction } from "../src/Models/SplitModels";
-const splitallData = ref(null);
-const jdata = ref("");
-const docRef = doc(db, "241229Test", "Robert");
-
-const handleAction = (action) => {
-  switch (action) {
-    case "CreateGroup":
-      splitallData.value = new SplitData(generateGUID(), "Robert Groups");
-      break;
-    case "addMember":
-      splitallData.value.members.push(new Member(generateGUID(), "New Member"));
-      break;
-    case "addTransaction":
-      splitallData.value.transactions.push(
-        new Transaction(
-          generateGUID(),
-          "132",
-          100,
-          "Example",
-          new Date().toISOString()
-        )
-      );
-      break;
-    case "addSplit":
-      splitallData.value.transactions[0].split.push(
-        new Member(generateGUID(), 1000)
-      );
-      break;
-    default:
-      console.error("Unknown action:", action);
-      return;
-  }
-
-  updateData();
-};
-
-const updateData = () => {
-  console.log;
-  jdata.value = JSON.stringify(splitallData.value);
-  setDoc(docRef, { splitallData: jdata.value })
-    .then(() => console.log("Data saved successfully"))
-    .catch((err) => console.error("Error saving data:", err));
-};
-
-const generateGUID = () => {
-  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
-    const r = (Math.random() * 16) | 0;
-    return (c === "x" ? r : (r & 0x3) | 0x8).toString(16);
-  });
-};
-</script>
-
-<style></style> -->
-
 <template>
   <div class="home-container">
     <h1>分帳輕鬆搞定</h1>
     <p>快速紀錄與分帳，讓金錢計算更簡單。</p>
     <div>
-      <button id="btnCreateNew" class="btn btn-success" @click="gotoGroup">
+      <button id="btnCreateNew" class="btn btn-success" @click="gotoGroupPage">
         建立新分帳
       </button>
-      <button id="btnShowHis" class="btn btn-success" @click="gotoHistory">
+      <button id="btnShowHis" class="btn btn-success" @click="gotoHistoryPage">
         檢視歷史紀錄
       </button>
     </div>
@@ -94,15 +15,18 @@ const generateGUID = () => {
 
 <script setup>
 import { ref, onMounted, inject } from "vue";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 import { doc, setDoc, getDoc, updateDoc } from "firebase/firestore";
-import { SplitData } from "../Models/SplitModels";
+import { SplitData, Member } from "../Models/SplitModels";
 import db from "../firebase/config";
 import liff from "@line/liff";
 
 const profile = ref(null);
 const splitallData = ref(null);
 const isLoading = inject("isLoading");
+const route = useRoute();
+const group = ref(null);
+const uid = ref(null);
 
 onMounted(async () => {
   isLoading.value = true;
@@ -113,21 +37,51 @@ onMounted(async () => {
       profile.value = value;
     })
     .finally(() => {
-      isLoading.value = false;
       sessionStorage.setItem("id", profile.value.userId);
       sessionStorage.setItem("displayName", profile.value.displayName);
     });
+
+  group.value = route.query?.g;
+  uid.value = route.query?.u;
+  if (group.value && uid) {
+    await HasPGotoGroupPage(true);
+  }
+  isLoading.value = false;
 });
 
 const router = useRouter();
 
-const gotoGroup = async () => {
+const HasPGotoGroupPage = async () => {
+  const docRef = doc(db, "241229Test", uid.value);
+  const docSnap = await getDoc(docRef);
+
+  if (docSnap.exists()) {
+    const fieldValue = docSnap.data()[group.value];
+    fieldValue.id = group.value;
+
+    alert(JSON.stringify(fieldValue));
+
+    sessionStorage.setItem("currentGroup", JSON.stringify(fieldValue));
+    router.push("/group");
+  } else {
+    alert("載入失敗");
+  }
+};
+
+const gotoGroupPage = async () => {
   isLoading.value = true;
   try {
     const docRef = doc(db, "241229Test", profile.value.userId);
     const docSnap = await getDoc(docRef);
     const RID = crypto.randomUUID();
-    splitallData.value = new SplitData(`${profile.value.displayName}的群組`);
+    const member = [];
+    member.push(
+      new Member(profile.value.userId, profile.value.displayName).topMap()
+    );
+    splitallData.value = new SplitData(
+      `${profile.value.displayName}的群組`,
+      member
+    );
     //已經存在這個文件
     if (docSnap.exists()) {
       await updateDoc(docRef, {
@@ -151,7 +105,7 @@ const gotoGroup = async () => {
   }
 };
 
-const gotoHistory = async () => {
+const gotoHistoryPage = async () => {
   isLoading.value = true;
 
   router.push({ path: "/history" });

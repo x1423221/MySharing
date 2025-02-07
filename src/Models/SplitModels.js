@@ -1,34 +1,32 @@
 // models.js
 export class Member {
-    constructor(userid, name) {
-        this.userid = userid;
+    constructor(userId, name) {
+        this.userId = userId;
         this.name = name;
     }
 
-    toMap() {
+    topMap() {
         return {
-            userid: this.userid,
+            userId: this.userId,
             name: this.name
-        };
+        }
     }
 }
 
 export class Transaction {
-    constructor(id, userid, payer, amount, description, date, split = []) {
-        this.id = id;
-        this.userid = userid;
+    constructor(userId, payer, amount, description, date, split = []) {
+        this.userId = userId;
         this.payer = payer;
         this.amount = amount;
         this.description = description;
-        this.date = date;
+        this.date = Transaction.dateFormat(date);
         this.split = split;
     }
 
     toMap() {
         return {
             isLock: false,
-            id: this.id,
-            userid: this.userid,
+            userId: this.userId,
             payer: this.payer,
             amount: this.amount,
             description: this.description,
@@ -36,34 +34,56 @@ export class Transaction {
             split: this.split
         };
     }
+
+    static dateFormat(date) {
+        const formatter = new Intl.DateTimeFormat("zh-TW", {
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
+            hour12: false,
+        });
+        const formattedDate = formatter.format(date).replace(/\//g, "-").replace(",", "");
+        return formattedDate;
+    }
 }
 
 export class Split {
-    constructor(userid = "", share = 0) {
-        this.userid = userid;
+    constructor(userId = "", userName = "", share = 0) {
+        this.userId = userId;
+        this.userName = userName;
         this.share = share;
     }
 
     toMap() {
         return {
-            userid: this.userid,
+            userName: this.userName,
+            userId: this.userId,
             share: this.share,
         };
     }
 }
 
 export class SplitData {
-    constructor(name, members = [], transactions = []) {
+    constructor(name, members = []) {
         this.name = name;
         this.members = members;
-        this.transactions = transactions;
     }
 
     toMap() {
         return {
             name: this.name,
             members: this.members,
-            transactions: this.transactions
         };
+    }
+}
+
+export class TransactionDetail {
+    constructor(userId = "", userName = "", splitAmount = 0) {
+        this.userId = userId;
+        this.userName = userName;
+        this.splitAmount = splitAmount;
     }
 }

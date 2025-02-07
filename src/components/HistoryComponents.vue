@@ -2,23 +2,21 @@
   <div class="group-container">
     <div class="container-title">
       <div class="title-container">
-        <button
-          id="btnGoHome"
-          class="btn btn-danger d-flex align-items-center justify-content-center"
-          @click="gotoHome"
-        >
-          <i class="bi bi-x-lg"></i>
-        </button>
+        <BtnGotoHomePage></BtnGotoHomePage>
         <div>
           <span>歷史紀錄</span>
         </div>
       </div>
     </div>
     <div class="card-container">
-      <div class="card" v-for="(group, index) in result" :key="group.id">
+      <div
+        class="card"
+        v-for="(group, index) in historyRecords"
+        :key="group.id"
+      >
         <h3>{{ group.name }}</h3>
         <button
-          id="btnCreateNew"
+          id="btnGotoHomePage"
           class="btn btn-success"
           @click="gotoGroup(index)"
         >
@@ -33,17 +31,17 @@
 import { inject, onMounted, ref } from "vue";
 import { getFirestore, collection, getDocs } from "firebase/firestore";
 import { useRouter } from "vue-router";
+import BtnGotoHomePage from "./BtnGotoHomePage.vue";
 
-const result = ref([]);
+const historyRecords = ref([]);
 const router = useRouter();
 
-const gotoHome = () => {
-  router.push("/");
-};
-
 const gotoGroup = (index) => {
-  console.log(index);
-  sessionStorage.setItem("currentGroup", JSON.stringify(result.value[index]));
+  alert(JSON.stringify(historyRecords.value[index]));
+  sessionStorage.setItem(
+    "currentGroup",
+    JSON.stringify(historyRecords.value[index])
+  );
   router.push("/group");
 };
 
@@ -62,7 +60,7 @@ onMounted(async () => {
           ...value,
         }));
 
-        result.value = [...result.value, ...tmpdata];
+        historyRecords.value = [...historyRecords.value, ...tmpdata];
         return; // 直接跳過後續篩選
       }
 
@@ -84,7 +82,7 @@ onMounted(async () => {
           ...value,
         }));
 
-      result.value = [...result.value, ...filteredGroups];
+      historyRecords.value = [...historyRecords.value, ...filteredGroups];
     });
 
     isLoading.value = false;
