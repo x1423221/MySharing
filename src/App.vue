@@ -92,11 +92,13 @@ import { provide, ref, reactive } from "vue";
 const isLoading = ref(false);
 const profile = ref({});
 const currentGroup = reactive({});
+const MemberList = reactive({});
 
 //設定給子元件使用
 provide("isLoading", isLoading);
 provide("profile", profile);
 provide("currentGroup", currentGroup);
+provide("MemberList", MemberList);
 </script>
 
 <style scoped>

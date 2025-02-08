@@ -88,6 +88,7 @@ const groupId = ref(null);
 const profile = inject("profile");
 const isLoading = inject("isLoading");
 const currentGroup = inject("currentGroup");
+const MemberList = inject("MemberList");
 
 onMounted(async () => {
   try {
@@ -247,6 +248,15 @@ const calculatePayments = () => {
 const fetchTransactions = async (groupId) => {
   const transListdocRef = doc(db, "transactionList", groupId);
 
+  const splitRef = doc(db, "241229Test", currentGroup.value.did);
+  const splitShot = onSnapshot(splitRef, (docSnap) => {
+    if (docSnap.exists()) {
+      const data = docSnap.data()[currentGroup.value.id];
+      currentGroup.value.members = data.members;
+      MemberList.value = data.members;
+    }
+  });
+
   // 設置 Firebase 監聽
   const unsubscribe = onSnapshot(transListdocRef, (docSnap) => {
     TransactionList.value = [];
@@ -306,6 +316,7 @@ const fetchTransactions = async (groupId) => {
 
   // 當組件卸載時，停止監聽
   onUnmounted(() => {
+    splitShot();
     unsubscribe();
   });
 };
@@ -320,10 +331,8 @@ const showModal = async (payment) => {
 
   XsModal.value.showModal(
     payment,
-    currentGroup.value.members,
-    groupId.value,
-    profile.value.id,
-    profile.value.displayName
+    //currentGroup.value.members,
+    groupId.value
   );
 
   isLoading.value = false;
