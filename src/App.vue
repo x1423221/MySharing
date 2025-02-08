@@ -87,11 +87,16 @@ const generateGUID = () => {
 </template>
 
 <script setup>
-import { provide, ref } from "vue";
-const isLoading = ref(false);
+import { provide, ref, reactive } from "vue";
 
-//設定讀取旗標給子元件使用
+const isLoading = ref(false);
+const profile = ref({});
+const currentGroup = reactive({});
+
+//設定給子元件使用
 provide("isLoading", isLoading);
+provide("profile", profile);
+provide("currentGroup", currentGroup);
 </script>
 
 <style scoped>

@@ -36,20 +36,19 @@ import BtnGotoHomePage from "./BtnGotoHomePage.vue";
 const historyRecords = ref([]);
 const router = useRouter();
 
+//取得父元件的資料
+const isLoading = inject("isLoading");
+const profile = inject("profile");
+const currentGroup = inject("currentGroup");
+
 const gotoGroup = (index) => {
-  sessionStorage.setItem(
-    "currentGroup",
-    JSON.stringify(historyRecords.value[index])
-  );
+  currentGroup.value = historyRecords.value[index];
   router.push("/group");
 };
 
 //註冊階段
 onMounted(async () => {
   try {
-    //取得父元件的讀取標籤
-    const isLoading = inject("isLoading");
-
     //取得分帳資料集合內的所有文件
     const firebase = getFirestore();
     const dbcol = collection(firebase, "241229Test");
@@ -60,8 +59,9 @@ onMounted(async () => {
       const data = ele.data();
 
       //過濾文件id是自己的
-      if (ele.id === sessionStorage.getItem("id")) {
+      if (ele.id === profile.value.userId) {
         const tmpdata = Object.entries(data).map(([key, value]) => ({
+          did: ele.id,
           id: key,
           ...value,
         }));
@@ -80,7 +80,7 @@ onMounted(async () => {
             return (
               k === "members" &&
               Array.isArray(v) &&
-              v.includes(sessionStorage.getItem("id"))
+              v.includes(profile.value.userId)
             );
           });
         })
@@ -94,7 +94,7 @@ onMounted(async () => {
 
     isLoading.value = false;
   } catch (err) {
-    console.log(err);
+    alert(err);
   }
 });
 </script>

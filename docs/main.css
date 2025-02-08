@@ -1,6 +1,6 @@
 .group-container {
   display: grid;
-  grid-template-rows: 25px auto 40px;
+  grid-template-rows: 5% auto 6%;
   width: 98vw;
   height: 98vh;
   background: white;
@@ -29,6 +29,7 @@
   align-items: center;
   justify-content: center;
   position: relative;
+  height: 100%;
 }
 
 .title-container > div > span {

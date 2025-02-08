@@ -14,9 +14,16 @@
 </template>
 
 <script setup>
-import { ref, onMounted, inject, provide } from "vue";
+import { ref, onMounted, inject } from "vue";
 import { useRouter, useRoute } from "vue-router";
-import { doc, setDoc, getDoc, updateDoc, arrayUnion } from "firebase/firestore";
+import {
+  doc,
+  setDoc,
+  getDoc,
+  updateDoc,
+  deleteDoc,
+  arrayUnion,
+} from "firebase/firestore";
 import { SplitData, Member } from "../Models/SplitModels";
 
 import db from "../firebase/config";
@@ -26,10 +33,13 @@ import liff from "@line/liff";
 const isLoading = inject("isLoading");
 
 //LINE使用者資訊
-const profile = ref(null);
+const profile = inject("profile");
 
 //分帳資料
-const splitData = ref(null);
+const currentGroup = inject("currentGroup");
+
+//分帳資料
+const splitData = ref({});
 
 //route用於切換至Group或者History
 const route = useRoute();
@@ -40,8 +50,7 @@ const route = useRoute();
 //因為文件id就是uid
 //後續預計調整成分享頁面會給guid
 //然後寫入一個欄位guid存放uId、fId等這樣網址就不會存放機敏資料了!
-const fId = ref(null);
-const uId = ref(null);
+const sId = ref(null);
 const router = useRouter();
 
 //Vue元件開始註冊時
@@ -49,23 +58,16 @@ onMounted(async () => {
   //設定讀取標籤為true，表示載入中，頁面反灰不可使用
   isLoading.value = true;
   //使用Liff方法取得目前登入使用者的資料
-  await liff
-    .getProfile()
-    .then((value) => {
-      //設定取得的資料
-      profile.value = value;
-    })
-    .finally(() => {
-      //將id、name 存在provide
-      provide("userData", profile.value);
-    });
+  await liff.getProfile().then((value) => {
+    //設定取得的資料
+    profile.value = value;
+  });
 
   //嘗試抓取進入網址的參數，如果有表示他是從分享連結進來的
-  fId.value = route.query?.g;
-  uId.value = route.query?.u;
-  if (fId.value && uId.value) {
+  sId.value = route.query.s;
+  if (sId.value) {
     //根據傳進來的資料作處理
-    await HasPGotoGroupPage(true);
+    await HasPGotoGroupPage();
   }
 
   //解除讀取狀態
@@ -74,37 +76,66 @@ onMounted(async () => {
 
 //如果是帶參數進入方式
 const HasPGotoGroupPage = async () => {
-  //根據uid、fid取得對應的資料
-  const docRef = doc(db, "241229Test", uId.value);
-  const docSnap = await getDoc(docRef);
+  try {
+    const tokenRef = doc(db, "TokenList", sId.value);
+    const tokenSnap = await getDoc(tokenRef);
 
-  //如果有存在對應的文件
-  if (docSnap.exists()) {
-    //那就將對應欄位的值抓出來
-    const fieldValue = docSnap.data()[fId.value];
-    fieldValue.id = fId.value;
+    if (tokenSnap.exists()) {
+      const data = tokenSnap.data();
+      const date = new Date(data.date.seconds * 1000); // 轉換為毫秒
+      const nowDate = new Date();
+      const tmpdate = new Date(date);
+      const fid = data.fid;
+      const docId = data.docId;
 
-    //判斷欄位資料的建立者是否等於目前登入者
-    const existsMember = fieldValue.members.find((record) => {
-      return record.userId === profile.value.userId;
-    });
+      tmpdate.setDate(tmpdate.getDate() + 1);
 
-    //如果不是，那就將現在這位人員加入members
-    if (!existsMember) {
-      await updateDoc(docRef, {
-        [`${fieldValue.id}.members`]: arrayUnion(
-          new Member(profile.value.userId, profile.value.displayName).topMap()
-        ),
-      });
+      if (nowDate > tmpdate) {
+        alert("連結已過期");
+        await deleteDoc(tokenRef);
+        window.close();
+      }
+
+      const docRef = doc(db, "241229Test", docId);
+      const docSnap = await getDoc(docRef);
+
+      if (docSnap.exists()) {
+        const fieldValue = docSnap.data()[fid];
+
+        const existsMember = fieldValue.members.find((record) => {
+          return record.userId === profile.value.userId;
+        });
+
+        if (existsMember) {
+          try {
+            fieldValue.members.push(
+              new Member(profile.value.userId, profile.value.displayName)
+            );
+          } catch (err) {
+            alert(err);
+          }
+
+          await updateDoc(docRef, {
+            [`${fid}.members`]: arrayUnion(
+              new Member(
+                profile.value.userId,
+                profile.value.displayName
+              ).topMap()
+            ),
+          });
+        }
+
+        fieldValue.did = docId;
+        fieldValue.id = fid;
+        currentGroup.value = fieldValue;
+        router.push("/group");
+      }
+    } else {
+      alert("連結已失效");
+      window.close();
     }
-
-    //這邊要再改方式，否則目前的資料都可以從開發者工具上被讀取到
-    sessionStorage.setItem("currentGroup", JSON.stringify(fieldValue));
-
-    //跳轉到group
-    router.push("/group");
-  } else {
-    alert("載入失敗");
+  } catch (err) {
+    alert(err);
   }
 };
 
@@ -148,10 +179,14 @@ const gotoGroupPage = async () => {
         .catch((err) => console.error("Error saving data:", err));
     }
 
-    splitData.value = { ...splitData.value, id: RID };
+    splitData.value = {
+      ...splitData.value,
+      id: RID,
+      did: profile.value.userId,
+    };
 
     //要再換方式
-    sessionStorage.setItem("currentGroup", JSON.stringify(splitData.value));
+    currentGroup.value = splitData.value;
 
     //跳轉
     router.push({ path: "/group" });

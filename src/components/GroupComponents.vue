@@ -3,11 +3,11 @@
     <div class="container-title">
       <div class="title-container">
         <BtnGotoHomePage></BtnGotoHomePage>
-        <div v-if="storedGroup && !isEdit">
-          <span>{{ storedGroup.name }}</span>
+        <div v-if="currentGroup && !isEdit">
+          <span>{{ currentGroup.value.name }}</span>
           <i class="bi bi-pencil" @click="EditGroupName"></i>
         </div>
-        <div v-if="storedGroup && isEdit">
+        <div v-if="currentGroup && isEdit">
           <input type="text" style="width: 150px" v-model="groupName" />
           <i class="bi bi-check-circle" @click="SaveGroupName"></i>
           <i class="bi bi-x-circle" @click="EditGroupName"></i>
@@ -71,14 +71,11 @@
 import liff from "@line/liff";
 import db from "../firebase/config";
 import BtnGotoHomePage from "./BtnGotoHomePage.vue";
-import { inject, onMounted, reactive, ref, onUnmounted } from "vue";
+import { inject, onMounted, ref, onUnmounted } from "vue";
 import { doc, updateDoc, setDoc, onSnapshot, getDoc } from "firebase/firestore";
 import { Transaction, TransactionDetail } from "../Models/SplitModels";
 import PaymentComponents from "./PaymentComponents.vue";
 
-let storedGroup = reactive({});
-const userId = ref(null);
-const userName = ref("");
 const isEdit = ref(false);
 const groupName = ref("");
 
@@ -87,21 +84,19 @@ const TransactionData = ref([]);
 const paymentsList = ref([]);
 const XsModal = ref(null);
 const groupId = ref(null);
-let isLoading;
+
+const profile = inject("profile");
+const isLoading = inject("isLoading");
+const currentGroup = inject("currentGroup");
 
 onMounted(async () => {
   try {
-    isLoading = inject("isLoading");
     isLoading.value = true;
 
-    const groupDataString = JSON.parse(sessionStorage.getItem("currentGroup"));
-    userId.value = sessionStorage.getItem("id");
-    userName.value = sessionStorage.getItem("displayName");
-    storedGroup = groupDataString;
-    groupName.value = storedGroup.name;
-    groupId.value = storedGroup.id;
-
-    if (storedGroup && groupId) {
+    groupName.value = currentGroup.value.name;
+    groupId.value = currentGroup.value.id;
+    alert(JSON.stringify(currentGroup.value));
+    if (currentGroup) {
       fetchTransactions(groupId.value);
     }
   } catch (err) {
@@ -118,10 +113,10 @@ const EditGroupName = () => {
 const SaveGroupName = async () => {
   try {
     isLoading.value = true;
-    storedGroup.name = groupName.value;
-    const docRef = doc(db, "241229Test", userId.value);
+    currentGroup.value.name = groupName.value;
+    const docRef = doc(db, "241229Test", currentGroup.value.did);
     await updateDoc(docRef, {
-      [`${storedGroup.id}.name`]: storedGroup.name,
+      [`${currentGroup.value.id}.name`]: currentGroup.value.name,
     });
 
     isEdit.value = !isEdit.value;
@@ -132,19 +127,25 @@ const SaveGroupName = async () => {
 };
 
 const NewTransaction = async () => {
+  isLoading.value = true;
+
   //id, payer, amount, description, date, split = [];
   const RID = crypto.randomUUID();
+
   const transaction = new Transaction(
-    userId.value,
-    userName.value,
+    profile.value.userId,
+    profile.value.displayName,
     0,
-    userName.value + "創建",
+    profile.value.displayName + "創建",
     new Date()
   ).toMap();
 
   try {
-    isLoading.value = true;
-    const TransactionListdoc = doc(db, "transactionList", storedGroup.id);
+    const TransactionListdoc = doc(
+      db,
+      "transactionList",
+      currentGroup.value.id
+    );
     const TransactionListnap = await getDoc(TransactionListdoc);
 
     if (TransactionListnap.exists()) {
@@ -167,9 +168,11 @@ const NewTransaction = async () => {
 
 const shareMember = () => {
   try {
-    const groupId = storedGroup.id; // 取得當前群組 ID
+    const RID = crypto.randomUUID();
+
     const currentUrl = "https://liff.line.me/2006768109-93myxPab" + "/home"; // 取得當前頁面網址
-    const shareUrl = `${currentUrl}?u=${userId.value}&g=${groupId}`; // 組合分享連結
+    const shareUrl = `${currentUrl}?s=${RID}`; // 組合分享連結
+
     //alert(liff.isApiAvailable("shareTargetPicker"));
     liff
       .shareTargetPicker(
@@ -183,18 +186,13 @@ const shareMember = () => {
           isMultiple: true,
         }
       )
-      .then(function (res) {
-        if (res) {
-          // succeeded in sending a message through TargetPicker
-          alert(`[${res.status}] Message sent!`);
-        } else {
-          // sending message canceled
-          alert("TargetPicker was closed!");
-        }
-      })
-      .catch(function (err) {
-        // something went wrong before sending a message
-        alert("something wrong happen" + err);
+      .then(async () => {
+        const TokenDoc = doc(db, "TokenList", RID);
+        await setDoc(TokenDoc, {
+          date: new Date(),
+          docId: currentGroup.value.did,
+          fid: currentGroup.value.id,
+        });
       });
   } catch (err) {
     alert(err);
@@ -323,10 +321,10 @@ const showModal = async (payment) => {
 
   XsModal.value.showModal(
     payment,
-    storedGroup.members,
+    currentGroup.value.members,
     groupId.value,
-    userId,
-    userName
+    profile.value.id,
+    profile.value.displayName
   );
 
   isLoading.value = false;
