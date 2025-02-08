@@ -95,7 +95,6 @@ onMounted(async () => {
 
     groupName.value = currentGroup.value.name;
     groupId.value = currentGroup.value.id;
-    alert(JSON.stringify(currentGroup.value));
     if (currentGroup) {
       fetchTransactions(groupId.value);
     }
