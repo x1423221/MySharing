@@ -1,6 +1,6 @@
 .group-container {
   display: grid;
-  grid-template-rows: 5% auto 6%;
+  grid-template-rows: 25px auto 6%;
   width: 98vw;
   height: 98vh;
   background: white;

@@ -99,9 +99,4 @@ onMounted(async () => {
 });
 </script>
 
-<style scoped>
-.card-container {
-  overflow-x: scroll;
-  height: 98%;
-}
-</style>
+<style scoped></style>
