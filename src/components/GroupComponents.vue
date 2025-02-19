@@ -42,7 +42,7 @@
           </li>
         </ul>
       </div>
-      <div>
+      <div style="height: 70%;">
         <h3>帳目列表</h3>
         <div class="card-container">
           <div v-for="d in TransactionList" :key="d.id" class="card" :class="{ hidden: cardisNew[d.id] }"
