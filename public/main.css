@@ -2,7 +2,7 @@
   display: grid;
   grid-template-rows: 5% auto 5%;
   width: 98vw;
-  height: 98vh;
+  height: 100vh;
   background: white;
   border-radius: 25px;
   overflow: hidden;
@@ -43,6 +43,7 @@
 
 .container-body {
   /* overflow-y: auto;*/
+  height: 50%;
   padding: 10px;
 }
 
@@ -80,7 +81,7 @@
 .card-container {
   overflow-x: hidden;
   overflow-y: auto;
-  height: 500px;
+  height: 50%;
   scrollbar-gutter: stable;
 }
 
