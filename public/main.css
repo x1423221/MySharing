@@ -2,7 +2,7 @@
   display: grid;
   grid-template-rows: 30px 85vh 40px;
   width: 98vw;
-  height: 100vh;
+  height: 98vh;
   background: white;
   border-radius: 25px;
   overflow: hidden;
