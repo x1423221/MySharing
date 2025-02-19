@@ -28,7 +28,7 @@ export class Transaction {
             isLock: false,
             userId: this.userId,
             payer: this.payer,
-            amount: this.amount,
+            amount: Number(this.amount),
             description: this.description,
             date: this.date,
             split: this.split
@@ -87,3 +87,18 @@ export class TransactionDetail {
         this.splitAmount = splitAmount;
     }
 }
+
+export const setCardStyle = (Target ,ItemStyle , ItemShow) => {
+    const animationTime = 800;
+    Target.forEach((ele, index) => {
+      if (!ItemStyle[ele.id]) {
+        ItemStyle[ele.id] = `animation: showCard ${animationTime / 1000}s ease-in-out ${index * 250}ms;`;
+      }
+      ItemShow[ele.id] = true;
+  
+      setTimeout(()=>{
+         delete ItemStyle[ele.id];
+         delete ItemShow[ele.id];
+      } , animationTime + index*250)
+    });
+  };

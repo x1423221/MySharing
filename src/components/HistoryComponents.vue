@@ -13,6 +13,8 @@
         class="card"
         v-for="(group, index) in historyRecords"
         :key="group.id"
+        :class="{ hidden: cardisNew[group.id] }"
+        :style="cardStyle[group.id]"
       >
         <h3>{{ group.name }}</h3>
         <button
@@ -28,10 +30,12 @@
 </template>
 
 <script setup>
-import { inject, onMounted, ref } from "vue";
+import { inject, onMounted, ref ,reactive } from "vue";
 import { getFirestore, collection, getDocs } from "firebase/firestore";
 import { useRouter } from "vue-router";
+import { setCardStyle } from "@/Models/SplitModels";
 import BtnGotoHomePage from "./BtnGotoHomePage.vue";
+
 
 const historyRecords = ref([]);
 const router = useRouter();
@@ -40,6 +44,8 @@ const router = useRouter();
 const isLoading = inject("isLoading");
 const profile = inject("profile");
 const currentGroup = inject("currentGroup");
+const cardStyle = reactive({});
+const cardisNew = reactive({});
 
 const gotoGroup = (index) => {
   currentGroup.value = historyRecords.value[index];
@@ -92,6 +98,8 @@ onMounted(async () => {
       historyRecords.value = [...historyRecords.value, ...filteredGroups];
     });
 
+    setCardStyle(historyRecords.value , cardStyle , cardisNew);
+
     isLoading.value = false;
   } catch (err) {
     alert(err);
@@ -99,4 +107,6 @@ onMounted(async () => {
 });
 </script>
 
-<style scoped></style>
+<style scoped>
+
+</style>

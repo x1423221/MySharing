@@ -19,14 +19,18 @@
       <div>
         <h3>即時統計</h3>
         <div>
-          <div v-for="(user, index) in TransactionData" :key="index">
-            <span>使用者 ID: {{ user.userName }},</span>
+          <div v-for="(user, index) in TransactionData" :key="index" class="row">
+            <div class="t">
+              <span>{{ user.userName.substring(0, 1) }}</span>
+            </div>
+            <div class="col">
             <span v-if="user.splitAmount > 0">支出</span>
             <span v-else>需支付:</span>
             {{
               user.splitAmount > 0 ? user.splitAmount : user.splitAmount * -1
             }}
             元
+          </div>
           </div>
         </div>
       </div>
@@ -38,20 +42,16 @@
           </li>
         </ul>
       </div>
-
       <div>
         <h3>帳目列表</h3>
-        <div class="TransactionList">
-          <div v-for="d in TransactionList" :key="d.id" class="card">
+        <div class="card-container">
+          <div v-for="d in TransactionList" :key="d.id" class="card" :class="{ hidden: cardisNew[d.id] }"
+            :style="cardStyle[d.id]">
             <div class="card-body">
               <h5 class="card-title">{{ d.description }}</h5>
               金額:<span>{{ d.amount }}</span>
               <div v-if="!d.isLock">
-                <button
-                  class="btn btn-primary"
-                  data-bs-target="#exampleModal"
-                  @click="showModal(d)"
-                >
+                <button class="btn btn-primary" data-bs-target="#exampleModal" @click="showModal(d)">
                   編輯
                 </button>
               </div>
@@ -71,19 +71,22 @@
 import liff from "@line/liff";
 import db from "../firebase/config";
 import BtnGotoHomePage from "./BtnGotoHomePage.vue";
-import { inject, onMounted, ref, onUnmounted } from "vue";
+import PaymentComponents from "./PaymentComponents.vue";
+
+import { inject, onMounted, ref, onUnmounted, reactive, watch } from "vue";
 import { doc, updateDoc, setDoc, onSnapshot, getDoc } from "firebase/firestore";
 import { Transaction, TransactionDetail } from "../Models/SplitModels";
-import PaymentComponents from "./PaymentComponents.vue";
+import { setCardStyle } from "../Models/SplitModels";
 
 const isEdit = ref(false);
 const groupName = ref("");
-
 const TransactionList = ref([]);
 const TransactionData = ref([]);
 const paymentsList = ref([]);
 const XsModal = ref(null);
 const groupId = ref(null);
+const cardStyle = reactive({});
+const cardisNew = reactive({});
 
 const profile = inject("profile");
 const isLoading = inject("isLoading");
@@ -96,6 +99,7 @@ onMounted(async () => {
 
     groupName.value = currentGroup.value.name;
     groupId.value = currentGroup.value.id;
+
     if (currentGroup) {
       fetchTransactions(groupId.value);
     }
@@ -105,6 +109,21 @@ onMounted(async () => {
     isLoading.value = false;
   }
 });
+
+watch(TransactionList, (newItem, oldItem) => {
+
+  if (oldItem.length > 0) {
+    const tmpdata = newItem.filter(item => {
+      // 如果在 oldItem 中找不到對應的 item.id，則保留這個 item
+      return !oldItem.some(_item => _item.id === item.id);
+    });
+
+    setCardStyle(tmpdata, cardStyle, cardisNew)
+  }
+  else {
+    setCardStyle(newItem, cardStyle, cardisNew)
+  }
+})
 
 const EditGroupName = () => {
   isEdit.value = !isEdit.value;
@@ -170,7 +189,7 @@ const shareMember = () => {
   try {
     const RID = crypto.randomUUID();
 
-    const currentUrl = "https://liff.line.me/2006768109-93myxPab" + "/home"; // 取得當前頁面網址
+    const currentUrl = "https://liff.line.me/2006768109-93myxPab" + "/"; // 取得當前頁面網址
     const shareUrl = `${currentUrl}?s=${RID}`; // 組合分享連結
 
     //alert(liff.isApiAvailable("shareTargetPicker"));
@@ -308,6 +327,7 @@ const fetchTransactions = async (groupId) => {
       paymentsList.value.sort((a, b) => b.amount - a.amount);
       TransactionList.value.sort((a, b) => new Date(b.date) - new Date(a.date));
       TransactionData.value.sort((a, b) => a.splitAmount - b.splitAmount);
+
     } else {
       TransactionList.value = [];
       TransactionData.value = [];
@@ -350,5 +370,24 @@ const showModal = async (payment) => {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.t {
+  color: white;
+  width: 40px;
+  height: 40px;
+  background-color: lightslategray;
+  border-radius: 50%;
+  text-align: center;
+  align-content: center;
+}
+
+.row {
+  margin: 5px;
+}
+
+.col{
+  align-items: center;
+  align-content: center;
 }
 </style>

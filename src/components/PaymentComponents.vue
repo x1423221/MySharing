@@ -88,7 +88,6 @@ const showModal = (payment, group) => {
 };
 
 const hideModal = async (NeedUpdate) => {
-  alert(groupId.value);
   const transListdocRef = doc(db, "transactionList", groupId.value);
 
   await updateDoc(transListdocRef, {
@@ -98,7 +97,7 @@ const hideModal = async (NeedUpdate) => {
   if (NeedUpdate) {
     await updateDoc(transListdocRef, {
       [`${Transaction.value.id}.description`]: Transaction.value.description,
-      [`${Transaction.value.id}.amount`]: Transaction.value.amount,
+      [`${Transaction.value.id}.amount`]: Number(Transaction.value.amount),
       [`${Transaction.value.id}.split`]: Transaction.value.split,
     });
   }

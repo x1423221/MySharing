@@ -93,7 +93,7 @@ const HasPGotoGroupPage = async () => {
       if (nowDate > tmpdate) {
         alert("連結已過期");
         await deleteDoc(tokenRef);
-        window.close();
+        liff.closeWindow();
       }
 
       const docRef = doc(db, "241229Test", docId);
@@ -106,7 +106,7 @@ const HasPGotoGroupPage = async () => {
           return record.userId === profile.value.userId;
         });
 
-        if (existsMember) {
+        if (!existsMember) {
           try {
             fieldValue.members.push(
               new Member(profile.value.userId, profile.value.displayName)
@@ -115,16 +115,21 @@ const HasPGotoGroupPage = async () => {
             alert(err);
           }
 
-          await updateDoc(docRef, {
-            [`${fid}.members`]: arrayUnion(
-              new Member(
-                profile.value.userId,
-                profile.value.displayName
-              ).topMap()
-            ),
-          });
+          try {
+            await updateDoc(docRef, {
+              [`${fid}.members`]: arrayUnion(
+                new Member(
+                  profile.value.userId,
+                  profile.value.displayName
+                ).topMap()
+              ),
+            })
+          } catch (err) {
+            alert(err)
+          }
         }
 
+        await deleteDoc(tokenRef);
         fieldValue.did = docId;
         fieldValue.id = fid;
         currentGroup.value = fieldValue;
@@ -132,7 +137,7 @@ const HasPGotoGroupPage = async () => {
       }
     } else {
       alert("連結已失效");
-      window.close();
+      liff.closeWindow();
     }
   } catch (err) {
     alert(err);
