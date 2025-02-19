@@ -1,6 +1,6 @@
 .group-container {
   display: grid;
-  grid-template-rows: 5% auto 40px;
+  grid-template-rows: 5% auto 5%;
   width: 98vw;
   height: 98vh;
   background: white;
@@ -80,7 +80,7 @@
 .card-container {
   overflow-x: hidden;
   overflow-y: auto;
-  height: 60vh;
+  height: 500px;
   scrollbar-gutter: stable;
 }
 
