@@ -304,20 +304,20 @@ const fetchTransactions = async (groupId) => {
             new TransactionDetail(value.userId, value.payer, value.amount)
           );
         }
-        const myselfAmount = 0;
+        let myselfAmount = 0;
         value.split.forEach((split) => {
           const userId = split.userId;
           const userName = split.userName;
           const share = parseFloat(split.share) * -1; // 轉換成負值
 
           if (userId != value.userId) {
-            myselfAmount -= share;
-            isExsist = TransactionData.value.find((record) => {
+            myselfAmount += share;
+            let issplitExsist = TransactionData.value.find((record) => {
               return record.userId === userId;
             });
 
-            if (isExsist) {
-              isExsist.splitAmount += share;
+            if (issplitExsist) {
+              issplitExsist.splitAmount += share;
             } else {
               TransactionData.value.push(
                 new TransactionDetail(userId, userName, share)
@@ -325,7 +325,13 @@ const fetchTransactions = async (groupId) => {
             }
           }
         });
+
+        let currentUserData = TransactionData.value.find(record => record.userId === value.userId);
+        if (currentUserData) {
+          currentUserData.splitAmount -= myselfAmount;
+        }
       });
+
       paymentsList.value = calculatePayments(); // 每次 Firebase 資料變動時更新統計數據
 
       paymentsList.value.sort((a, b) => b.amount - a.amount);
