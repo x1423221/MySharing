@@ -304,13 +304,14 @@ const fetchTransactions = async (groupId) => {
             new TransactionDetail(value.userId, value.payer, value.amount)
           );
         }
-
+        const myselfAmount = 0;
         value.split.forEach((split) => {
           const userId = split.userId;
           const userName = split.userName;
           const share = parseFloat(split.share) * -1; // 轉換成負值
 
           if (userId != value.userId) {
+            myselfAmount -= share;
             isExsist = TransactionData.value.find((record) => {
               return record.userId === userId;
             });
