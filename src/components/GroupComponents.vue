@@ -52,7 +52,7 @@
             <div class="card-body">
               <h5 class="card-title">{{ d.description }}</h5>
               金額:<span>{{ d.amount }}</span>
-              <div v-if="!d.isLock">
+              <div v-if="!d.isLock && d.canEdit">
                 <button class="btn btn-primary" data-bs-target="#exampleModal" @click="showModal(d)">
                   編輯
                 </button>
@@ -287,6 +287,7 @@ const fetchTransactions = async (groupId) => {
       const data = docSnap.data();
       const tmpdata = Object.entries(data).map(([key, value]) => ({
         id: key,
+        canEdit: value.userId === profile.value.userId,
         ...value,
       }));
       TransactionList.value = tmpdata;
