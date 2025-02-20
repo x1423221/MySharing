@@ -1,6 +1,6 @@
 .group-container {
   display: grid;
-  grid-template-rows: 30px 85vh 40px;
+  grid-template-rows: 30px 90vh 40px;
   width: 98vw;
   height: 98vh;
   background: white;
@@ -43,7 +43,7 @@
 
 .container-body {
   /* overflow-y: auto;*/
-  height: 50%;
+  height: 100%;
   padding: 10px;
 }
 
