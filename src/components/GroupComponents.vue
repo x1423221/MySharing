@@ -287,7 +287,6 @@ const fetchTransactions = async (groupId) => {
       const data = docSnap.data();
       const tmpdata = Object.entries(data).map(([key, value]) => ({
         id: key,
-        canEdit: value.userId === profile.value.userId,
         ...value,
       }));
       TransactionList.value = tmpdata;
