@@ -18,7 +18,7 @@
       <PaymentComponents ref="XsModal"></PaymentComponents>
       <div style="overflow-y: hidden;">
         <h3>即時統計</h3>
-        <div style="height: 100%; overflow-y: auto;">
+        <div style="height: 75%; overflow-y: auto;">
           <div v-for="(user, index) in TransactionData" :key="index" class="row">
             <div class="t">
               <span>{{ user.userName.substring(0, 1) }}</span>
@@ -34,6 +34,7 @@
           </div>
         </div>
       </div>
+      {{ JSON.stringify(TransactionData) }}
       <div style="overflow-y: hidden;">
         <h3>建議付款方案</h3>
         <div style="height: 75%; overflow-y: auto;">
@@ -320,10 +321,10 @@ const fetchTransactions = async (groupId) => {
         });
 
         if (isExsist) {
-          isExsist.splitAmount += value.amount;
+          isExsist.splitAmount -= myselfAmount*-1;
         } else {
           TransactionData.value.push(
-            new TransactionDetail(value.userId, value.payer, value.amount)
+            new TransactionDetail(value.userId, value.payer, myselfAmount*-1)
           );
         }
       });
