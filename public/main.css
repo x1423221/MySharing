@@ -80,9 +80,8 @@
 }
 
 .card-container {
-  overflow-x: hidden;
   overflow-y: auto;
-  height: 75%;
+  height: 90%;
   scrollbar-gutter: stable;
 }
 

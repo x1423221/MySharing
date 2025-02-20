@@ -44,7 +44,7 @@
           </ul>
         </div>
       </div>
-      <div>
+      <div style="overflow-y: hidden;">
         <h3>帳目列表</h3>
         <div class="card-container">
           <div v-for="d in TransactionList" :key="d.id" class="card" :class="{ hidden: cardisNew[d.id] }"
@@ -269,7 +269,7 @@ const calculatePayments = () => {
 const fetchTransactions = async (groupId) => {
   const transListdocRef = doc(db, "transactionList", groupId);
   const splitRef = doc(db, "241229Test", currentGroup.value.did);
-  
+
   const splitShot = onSnapshot(splitRef, (docSnap) => {
     if (docSnap.exists()) {
       const data = docSnap.data()[currentGroup.value.id];
