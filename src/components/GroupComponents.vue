@@ -321,7 +321,7 @@ const fetchTransactions = async (groupId) => {
         });
 
         if (isExsist) {
-          isExsist.splitAmount -= myselfAmount*-1;
+          isExsist.splitAmount += myselfAmount*-1;
         } else {
           TransactionData.value.push(
             new TransactionDetail(value.userId, value.payer, myselfAmount*-1)
