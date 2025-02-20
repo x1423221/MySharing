@@ -268,8 +268,8 @@ const calculatePayments = () => {
 
 const fetchTransactions = async (groupId) => {
   const transListdocRef = doc(db, "transactionList", groupId);
-
   const splitRef = doc(db, "241229Test", currentGroup.value.did);
+  
   const splitShot = onSnapshot(splitRef, (docSnap) => {
     if (docSnap.exists()) {
       const data = docSnap.data()[currentGroup.value.id];

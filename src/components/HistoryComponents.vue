@@ -9,19 +9,10 @@
       </div>
     </div>
     <div class="card-container">
-      <div
-        class="card"
-        v-for="(group, index) in historyRecords"
-        :key="group.id"
-        :class="{ hidden: cardisNew[group.id] }"
-        :style="cardStyle[group.id]"
-      >
+      <div class="card" v-for="(group, index) in historyRecords" :key="group.id"
+        :class="{ hidden: cardisNew[group.id] }" :style="cardStyle[group.id]">
         <h3>{{ group.name }}</h3>
-        <button
-          id="btnGotoHomePage"
-          class="btn btn-success"
-          @click="gotoGroup(index)"
-        >
+        <button id="btnGotoHomePage" class="btn btn-success" @click="gotoGroup(index)">
           前往{{ group.name }}
         </button>
       </div>
@@ -30,7 +21,7 @@
 </template>
 
 <script setup>
-import { inject, onMounted, ref ,reactive } from "vue";
+import { inject, onMounted, ref, reactive } from "vue";
 import { getFirestore, collection, getDocs } from "firebase/firestore";
 import { useRouter } from "vue-router";
 import { setCardStyle } from "@/Models/SplitModels";
@@ -85,12 +76,14 @@ onMounted(async () => {
           return Object.entries(value).some(([k, v]) => {
             return (
               k === "members" &&
-              Array.isArray(v) &&
-              v.includes(profile.value.userId)
+              v.filter(item => {
+                return item.userId === profile.value.userId
+              }).length > 0
             );
           });
         })
         .map(([key, value]) => ({
+          did: ele.id,
           id: key, // 確保 `id` 是單獨的欄位
           ...value,
         }));
@@ -98,7 +91,7 @@ onMounted(async () => {
       historyRecords.value = [...historyRecords.value, ...filteredGroups];
     });
 
-    setCardStyle(historyRecords.value , cardStyle , cardisNew);
+    setCardStyle(historyRecords.value, cardStyle, cardisNew);
 
     isLoading.value = false;
   } catch (err) {
@@ -107,6 +100,4 @@ onMounted(async () => {
 });
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

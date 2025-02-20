@@ -8,21 +8,23 @@
         </div>
         <div class="modal-body" v-if="Transaction && MemberList">
           <div class="row">
-            <div class="col-md-5">帳目名稱:</div>
-            <div class="col-md-7"><input v-model="Transaction.description" /></div>
+            <div class="col-md-4">帳目名稱:</div>
+            <div class="col-md"><input v-model="Transaction.description" /></div>
           </div>
-          <div class="col-md-5">總金額:</div>
-          <div class="col-md-7"><input v-model="Transaction.amount" /></div>
+          <div>
+            <div class="col-md-4">總金額:</div>
+            <div class="col-md"><input v-model="Transaction.amount" /></div>
+          </div>
           <h3>分攤明細</h3>
           <div v-for="(l, index) in Transaction.split" :key="index" class="row">
-            <div class="col-5">
+            <div class="col-md-4">
               <select v-model="l.userId" @change="MemberChange(index)">
                 <option v-for="(m, index) in MemberList.value" :key="index" :value="m.userId">
                   {{ m.name }}
                 </option>
               </select>:
             </div>
-            <div class="col"><input v-model="l.share" /></div>
+            <div class="col-md"><input v-model="l.share" /></div>
           </div>
           <button class="btn btn-success" @click="newShare">新增分攤明細</button>
         </div>
@@ -115,7 +117,12 @@ defineExpose({
 </script>
 
 <style scoped>
-.col-3 {
-  
+.col-md-4{
+  letter-spacing: 10px;
 }
+
+.select{
+  height: 100%;
+}
+
 </style>
