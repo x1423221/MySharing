@@ -293,17 +293,7 @@ const fetchTransactions = async (groupId) => {
       TransactionList.value = tmpdata;
 
       TransactionList.value.forEach((value) => {
-        let isExsist = TransactionData.value.find((record) => {
-          return record.userId == value.userId;
-        });
-
-        if (isExsist) {
-          isExsist.splitAmount += value.amount;
-        } else {
-          TransactionData.value.push(
-            new TransactionDetail(value.userId, value.payer, value.amount)
-          );
-        }
+        
         let myselfAmount = 0;
         value.split.forEach((split) => {
           const userId = split.userId;
@@ -326,9 +316,16 @@ const fetchTransactions = async (groupId) => {
           }
         });
 
-        let currentUserData = TransactionData.value.find(record => record.userId === value.userId);
-        if (currentUserData) {
-          currentUserData.splitAmount -= myselfAmount;
+        let isExsist = TransactionData.value.find((record) => {
+          return record.userId == value.userId;
+        });
+
+        if (isExsist) {
+          isExsist.splitAmount += value.amount + myselfAmount;
+        } else {
+          TransactionData.value.push(
+            new TransactionDetail(value.userId, value.payer, value.amount+myselfAmount)
+          );
         }
       });
 
