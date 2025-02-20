@@ -52,7 +52,7 @@
             <div class="card-body">
               <h5 class="card-title">{{ d.description }}</h5>
               金額:<span>{{ d.amount }}</span>
-              <div v-if="!d.isLock && d.canEdit">
+              <div v-if="!d.isLock">
                 <button class="btn btn-primary" data-bs-target="#exampleModal" @click="showModal(d)">
                   編輯
                 </button>
@@ -320,10 +320,10 @@ const fetchTransactions = async (groupId) => {
         });
 
         if (isExsist) {
-          isExsist.splitAmount += value.amount + myselfAmount;
+          isExsist.splitAmount += value.amount;
         } else {
           TransactionData.value.push(
-            new TransactionDetail(value.userId, value.payer, value.amount+myselfAmount)
+            new TransactionDetail(value.userId, value.payer, value.amount)
           );
         }
       });
