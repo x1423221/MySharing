@@ -11,7 +11,7 @@
             <div class="col-md-4">帳目名稱:</div>
             <div class="col-md"><input v-model="Transaction.description" /></div>
           </div>
-          <div>
+          <div class="row">
             <div class="col-md-4">總金額:</div>
             <div class="col-md"><input v-model="Transaction.amount" /></div>
           </div>
@@ -117,7 +117,16 @@ defineExpose({
 </script>
 
 <style scoped>
+input{
+  width: 100%;
+}
+
+.row > * {
+  width: 50% !important;
+}
+
 .col-md-4{
+  text-align: right;
   letter-spacing: 10px;
 }
 
