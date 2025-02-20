@@ -16,33 +16,35 @@
     </div>
     <div class="container-body">
       <PaymentComponents ref="XsModal"></PaymentComponents>
-      <div>
+      <div style="overflow-y: hidden;">
         <h3>即時統計</h3>
-        <div>
+        <div style="height: 100%; overflow-y: auto;">
           <div v-for="(user, index) in TransactionData" :key="index" class="row">
             <div class="t">
               <span>{{ user.userName.substring(0, 1) }}</span>
             </div>
             <div class="col">
-            <span v-if="user.splitAmount > 0">支出</span>
-            <span v-else>需支付:</span>
-            {{
-              user.splitAmount > 0 ? user.splitAmount : user.splitAmount * -1
-            }}
-            元
-          </div>
+              <span v-if="user.splitAmount > 0">支出</span>
+              <span v-else>需支付:</span>
+              {{
+                user.splitAmount > 0 ? user.splitAmount : user.splitAmount * -1
+              }}
+              元
+            </div>
           </div>
         </div>
       </div>
-      <div>
+      <div style="overflow-y: hidden;">
         <h3>建議付款方案</h3>
-        <ul>
-          <li v-for="(payment, index) in paymentsList" :key="index">
-            {{ payment.from }} 應支付 {{ payment.amount }} 元給 {{ payment.to }}
-          </li>
-        </ul>
+        <div style="height: 100%; overflow-y: auto;">
+          <ul>
+            <li v-for="(payment, index) in paymentsList" :key="index">
+              {{ payment.from }} 應支付 {{ payment.amount }} 元給 {{ payment.to }}
+            </li>
+          </ul>
+        </div>
       </div>
-      <div style="height: 80%;">
+      <div>
         <h3>帳目列表</h3>
         <div class="card-container">
           <div v-for="d in TransactionList" :key="d.id" class="card" :class="{ hidden: cardisNew[d.id] }"
@@ -386,7 +388,7 @@ const showModal = async (payment) => {
   margin: 5px;
 }
 
-.col{
+.col {
   align-items: center;
   align-content: center;
 }

@@ -4,45 +4,33 @@
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title">帳目維護</h5>
-          <button
-            type="button"
-            class="btn-close"
-            data-bs-dismiss="modal"
-            aria-label="Close"
-          ></button>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body" v-if="Transaction && MemberList">
-          <div>帳目名稱:<input v-model="Transaction.description" /></div>
-          <div>總金額:<input v-model="Transaction.amount" /></div>
-          <h3>分攤明細</h3>
-          <div v-for="(l, index) in Transaction.split" :key="index">
-            <select v-model="l.userId" @change="MemberChange(index)">
-              <option
-                v-for="(m, index) in MemberList.value"
-                :key="index"
-                :value="m.userId"
-              >
-                {{ m.name }}
-              </option>
-            </select>
-            :<input v-model="l.share" />
+          <div class="row">
+            <div class="col-md-5">帳目名稱:</div>
+            <div class="col-md-7"><input v-model="Transaction.description" /></div>
           </div>
-          <button @click="newShare">新增分攤明細</button>
+          <div class="col-md-5">總金額:</div>
+          <div class="col-md-7"><input v-model="Transaction.amount" /></div>
+          <h3>分攤明細</h3>
+          <div v-for="(l, index) in Transaction.split" :key="index" class="row">
+            <div class="col-5">
+              <select v-model="l.userId" @change="MemberChange(index)">
+                <option v-for="(m, index) in MemberList.value" :key="index" :value="m.userId">
+                  {{ m.name }}
+                </option>
+              </select>:
+            </div>
+            <div class="col"><input v-model="l.share" /></div>
+          </div>
+          <button class="btn btn-success" @click="newShare">新增分攤明細</button>
         </div>
         <div class="modal-footer">
-          <button
-            type="button"
-            class="btn btn-secondary"
-            data-bs-dismiss="modal"
-            @click="hideModal(false)"
-          >
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="hideModal(false)">
             關閉
           </button>
-          <button
-            type="button"
-            class="btn btn-primary"
-            @click="hideModal(true)"
-          >
+          <button type="button" class="btn btn-primary" @click="hideModal(true)">
             儲存
           </button>
         </div>
@@ -126,4 +114,8 @@ defineExpose({
 });
 </script>
 
-<style scoped></style>
+<style scoped>
+.col-3 {
+  
+}
+</style>
