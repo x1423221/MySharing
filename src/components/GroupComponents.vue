@@ -36,7 +36,7 @@
       </div>
       <div style="overflow-y: hidden;">
         <h3>建議付款方案</h3>
-        <div style="height: 100%; overflow-y: auto;">
+        <div style="height: 75%; overflow-y: auto;">
           <ul>
             <li v-for="(payment, index) in paymentsList" :key="index">
               {{ payment.from }} 應支付 {{ payment.amount }} 元給 {{ payment.to }}
