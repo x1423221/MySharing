@@ -34,7 +34,6 @@
           </div>
         </div>
       </div>
-      {{ JSON.stringify(TransactionData) }}
       <div style="overflow-y: hidden;">
         <h3>建議付款方案</h3>
         <div style="height: 75%; overflow-y: auto;">
