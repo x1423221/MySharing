@@ -16,7 +16,7 @@
     </div>
     <div class="container-body">
       <PaymentComponents ref="XsModal"></PaymentComponents>
-      <div style="overflow-y: hidden; flex:1" >
+      <div style="overflow-y: hidden; flex:1">
         <h3>建議付款方案</h3>
         <div style="height: 70%; overflow-y: auto;">
           <ul>
@@ -33,14 +33,14 @@
             :style="cardStyle[d.id]">
             <div class="card-body">
               <h5 class="card-title">{{ d.description }}</h5>
-              <p>由{{d.payer}} 先墊付金額:<span>{{ d.amount }}</span>
+              <p>由{{ d.payer }} 先墊付金額:<span>{{ d.amount }}</span>
               </p>
-              <p v-if="d.split">
-                <span v-for="s in d.split" :key="s.userId">
-                  {{ s.userName }} : {{ findAmount(s.userName)  }} 
+              <p v-if="d.split.length > 0">
+                <span  v-for="s in Array.from(new Set(d.split.map(item => item.userName).filter(name => name !== d.payer)))" :key="s.userId">
+                  {{ s }} 支付 {{ findAmount(s) }},
                 </span>
                 <span>
-                  {{ d.amount - d.split.reduce((sum, s) => s.userName !== d.payer ? sum + findAmount(s.userName) : 0, 0) }}
+                  {{ d.payer }} 支付 {{ d.amount - d.split.filter(s => s.userName !== d.payer).reduce((sum, s) => sum + Number(s.share), 0) }}
                 </span>
               </p>
               <div v-if="!d.isLock">
@@ -85,7 +85,6 @@ const profile = inject("profile");
 const isLoading = inject("isLoading");
 const currentGroup = inject("currentGroup");
 const MemberList = inject("MemberList");
-
 onMounted(async () => {
   try {
     isLoading.value = true;
@@ -355,9 +354,13 @@ const showModal = async (payment) => {
   isLoading.value = false;
 };
 
-const findAmount = (userName) =>{
-  return  paymentsList.value.filter(item => item.from == userName).amount
-}
+const findAmount = (userName) => {
+  const filtered = paymentsList.value.filter(item => item.from === userName);
+  return filtered.length > 0 ? filtered[0].amount : 0;
+};
+
+
+
 </script>
 
 <style scoped>
