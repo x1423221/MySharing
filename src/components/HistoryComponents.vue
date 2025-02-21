@@ -15,8 +15,8 @@
           <div class="card-body">
             <h5 class="card-title">{{ group.name }}</h5>
             <span>{{ group.date }}</span>
-            <div>
-              <button id="btnGotoHomePage" class="btn btn-success" @click="gotoGroup(index)">
+            <div class="btnArea">
+              <button id="btnGotoGroupPage" class="btn btn-success" @click="gotoGroup(index)">
                 前往{{ group.name }}
               </button>
             </div>
