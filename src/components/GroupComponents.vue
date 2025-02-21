@@ -37,7 +37,10 @@
               </p>
               <p>
                 <span v-for="s in d.split" :key="s.userId">
-                  {{ s.userName }} : {{ s.share }} 
+                  {{ s.userName }} : {{ findAmount(s.userName)  }} 
+                </span>
+                <span>
+                  {{ d.amount - d.split.reduce((sum, s) => s.userName !== d.payer ? sum + findAmount(s.userName) : sum, 0) }}
                 </span>
               </p>
               <div v-if="!d.isLock">
@@ -351,6 +354,11 @@ const showModal = async (payment) => {
 
   isLoading.value = false;
 };
+
+const findAmount = (userName) =>{
+ 
+  return  paymentsList.value.filter(item => item.from == userName).amount
+}
 </script>
 
 <style scoped>
