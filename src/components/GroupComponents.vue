@@ -33,7 +33,13 @@
             :style="cardStyle[d.id]">
             <div class="card-body">
               <h5 class="card-title">{{ d.description }}</h5>
-              金額:<span>{{ d.amount }}</span>
+              <p>由{{d.payer}} 先墊付金額:<span>{{ d.amount }}</span>
+              </p>
+              <p>
+                <span v-for="s in d.split" :key="s.userId">
+                  {{ s.userName }} : {{ s.share }} 
+                </span>
+              </p>
               <div v-if="!d.isLock">
                 <button class="btn btn-primary" data-bs-target="#exampleModal" @click="showModal(d)">
                   編輯
