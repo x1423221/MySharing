@@ -35,12 +35,12 @@
               <h5 class="card-title">{{ d.description }}</h5>
               <p>由{{d.payer}} 先墊付金額:<span>{{ d.amount }}</span>
               </p>
-              <p>
+              <p v-if="d.split">
                 <span v-for="s in d.split" :key="s.userId">
                   {{ s.userName }} : {{ findAmount(s.userName)  }} 
                 </span>
                 <span>
-                  {{ d.amount - d.split.reduce((sum, s) => s.userName !== d.payer ? sum + findAmount(s.userName) : sum, 0) }}
+                  {{ d.amount - d.split.reduce((sum, s) => s.userName !== d.payer ? sum + findAmount(s.userName) : 0, 0) }}
                 </span>
               </p>
               <div v-if="!d.isLock">
@@ -356,7 +356,6 @@ const showModal = async (payment) => {
 };
 
 const findAmount = (userName) =>{
- 
   return  paymentsList.value.filter(item => item.from == userName).amount
 }
 </script>
