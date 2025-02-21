@@ -8,13 +8,20 @@
         </div>
       </div>
     </div>
-    <div class="card-container">
-      <div class="card" v-for="(group, index) in historyRecords" :key="group.id"
-        :class="{ hidden: cardisNew[group.id] }" :style="cardStyle[group.id]">
-        <h3>{{ group.name }}</h3>
-        <button id="btnGotoHomePage" class="btn btn-success" @click="gotoGroup(index)">
-          前往{{ group.name }}
-        </button>
+    <div class="container-body">
+      <div class="card-container">
+        <div class="card" v-for="(group, index) in historyRecords" :key="group.id"
+          :class="{ hidden: cardisNew[group.id] }" :style="cardStyle[group.id]">
+          <div class="card-body">
+            <h5 class="card-title">{{ group.name }}</h5>
+            <span>{{ group.date }}</span>
+            <div>
+              <button id="btnGotoHomePage" class="btn btn-success" @click="gotoGroup(index)">
+                前往{{ group.name }}
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -89,6 +96,7 @@ onMounted(async () => {
         }));
 
       historyRecords.value = [...historyRecords.value, ...filteredGroups];
+      historyRecords.value.sort((a,b) => a.date > b.date)
     });
 
     setCardStyle(historyRecords.value, cardStyle, cardisNew);

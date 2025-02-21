@@ -19,7 +19,7 @@ export class Transaction {
         this.payer = payer;
         this.amount = amount;
         this.description = description;
-        this.date = Transaction.dateFormat(date);
+        this.date = DateFormat(date);
         this.split = split;
     }
 
@@ -33,21 +33,7 @@ export class Transaction {
             date: this.date,
             split: this.split
         };
-    }
-
-    static dateFormat(date) {
-        const formatter = new Intl.DateTimeFormat("zh-TW", {
-            year: "numeric",
-            month: "2-digit",
-            day: "2-digit",
-            hour: "2-digit",
-            minute: "2-digit",
-            second: "2-digit",
-            hour12: false,
-        });
-        const formattedDate = formatter.format(date).replace(/\//g, "-").replace(",", "");
-        return formattedDate;
-    }
+    } 
 }
 
 export class Split {
@@ -67,15 +53,17 @@ export class Split {
 }
 
 export class SplitData {
-    constructor(name, members = []) {
+    constructor(name, members = [] , date = new Date()) {
         this.name = name;
         this.members = members;
+        this.date = DateFormat(date)
     }
 
     toMap() {
         return {
             name: this.name,
             members: this.members,
+            date : this.date
         };
     }
 }
@@ -102,3 +90,17 @@ export const setCardStyle = (Target ,ItemStyle , ItemShow) => {
       } , animationTime + index*250)
     });
   };
+
+export const DateFormat = (date) => {
+    const formatter = new Intl.DateTimeFormat("zh-TW", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: false,
+    });
+    const formattedDate = formatter.format(date).replace(/\//g, "-").replace(",", "");
+    return formattedDate;
+}

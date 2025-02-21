@@ -13,7 +13,7 @@
           </div>
           <div class="row">
             <div class="col-md-4">總金額:</div>
-            <div class="col-md"><input v-model="Transaction.amount" /></div>
+            <div class="col-md"><input inputmode="decimal" v-model="Transaction.amount" /></div>
           </div>
           <h3>分攤明細</h3>
           <div v-for="(l, index) in Transaction.split" :key="index" class="row">
@@ -24,7 +24,7 @@
                 </option>
               </select>:
             </div>
-            <div class="col-md"><input v-model="l.share" /></div>
+            <div class="col-md"><input inputmode="decimal" v-model="l.share" /></div>
           </div>
           <button class="btn btn-success" @click="newShare">新增分攤明細</button>
         </div>
